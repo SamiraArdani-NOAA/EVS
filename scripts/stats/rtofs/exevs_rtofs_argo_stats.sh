@@ -85,15 +85,20 @@ for levl in 0 50 125 200 400 700 1000 1400; do
             export VAR=$vari
             mkdir -p $STATSDIR/$RUN.$VDATE/$VAR
             if [ -s $COMOUTsmall/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat ]; then
-              cpreq -v $COMOUTsmall/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat $STATSDIR/$RUN.$VDATE/$VAR/.
+              	cpreq -v $COMOUTsmall/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat $STATSDIR/$RUN.$VDATE/$VAR/.
             else
-              run_metplus.py -c ${PARMevs}/metplus_config/machine.conf \
-              -c $CONFIGevs/$STEP/$COMPONENT/${VERIF_CASE}/PointStat_fcstRTOFS_obs${RUNupper}_climoWOA23_$VAR.conf
-              export err=$?; err_chk
-              if [ $SENDCOM = "YES" ]; then
+		python ${USHevs}/${COMPONENT}/rtofs_stats_qc_argo.py
+		export err=$?; err_chk
+		export temp_id=`sed -n 1,1p ${COMOUTsmall}/rejected_temp_$VDATE.txt`
+		export psal_id=`sed -n 1,1p ${COMOUTsmall}/rejected_psal_$VDATE.txt`
+
+              	run_metplus.py -c ${PARMevs}/metplus_config/machine.conf \
+              	-c $CONFIGevs/$STEP/$COMPONENT/${VERIF_CASE}/PointStat_fcstRTOFS_obs${RUNupper}_climoWOA23_$VAR.conf
+              	export err=$?; err_chk
+              	if [ $SENDCOM = "YES" ]; then
                   mkdir -p $COMOUTsmall/$VAR
                   cpreq -v $STATSDIR/$RUN.$VDATE/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat $COMOUTsmall/$VAR/.
-              fi
+              	fi
             fi
           done
         else
