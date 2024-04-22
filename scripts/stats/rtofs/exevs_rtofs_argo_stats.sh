@@ -85,7 +85,7 @@ for levl in 0 50 125 200 400 700 1000 1400; do
             export VAR=$vari
             mkdir -p $STATSDIR/$RUN.$VDATE/$VAR
             if [ -s $COMOUTsmall/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat ]; then
-              	cpreq -v $COMOUTsmall/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat $STATSDIR/$RUN.$VDATE/$VAR/.
+              cp -v $COMOUTsmall/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat $STATSDIR/$RUN.$VDATE/$VAR/.
             else
 		python ${USHevs}/${COMPONENT}/rtofs_stats_qc_argo.py
 		export err=$?; err_chk
@@ -96,8 +96,10 @@ for levl in 0 50 125 200 400 700 1000 1400; do
               	export err=$?; err_chk
               	if [ $SENDCOM = "YES" ]; then
                   mkdir -p $COMOUTsmall/$VAR
-                  cpreq -v $STATSDIR/$RUN.$VDATE/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat $COMOUTsmall/$VAR/.
-              	fi
+		  if [ -s $STATSDIR/$RUN.$VDATE/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat ] ; then
+                  	cp -v $STATSDIR/$RUN.$VDATE/$VAR/point_stat_RTOFS_${RUNupper}_${VAR}_Z${levl}_${fhr2}0000L_${VDATE}_000000V.stat $COMOUTsmall/$VAR/.
+		  fi
+              fi
             fi
           done
         else
@@ -125,7 +127,9 @@ for vari in ${VARS}; do
     -c $CONFIGevs/$STEP/$COMPONENT/${VERIF_CASE}/StatAnalysis_fcstRTOFS.conf
     export err=$?; err_chk
     if [ $SENDCOM = "YES" ]; then
-      cpreq -v $STATSOUT/evs.stats.${COMPONENT}.${RUN}.${VERIF_CASE}_${VAR}.v${VDATE}.stat $COMOUTfinal/.
+      if [ -s $STATSOUT/evs.stats.${COMPONENT}.${RUN}.${VERIF_CASE}_${VAR}.v${VDATE}.stat ] ; then
+	    cp -v $STATSOUT/evs.stats.${COMPONENT}.${RUN}.${VERIF_CASE}_${VAR}.v${VDATE}.stat $COMOUTfinal/.
+      fi
     fi
   else
      echo "WARNING: Missing RTOFS_${RUNupper}_$VAR stat files for $VDATE in $STATSDIR/$RUN.$VDATE/$VAR/*.stat" 

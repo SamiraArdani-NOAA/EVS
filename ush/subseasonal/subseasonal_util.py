@@ -54,11 +54,18 @@ def metplus_command(conf_file_name):
                                'run_metplus.py')
     machine_conf = os.path.join(os.environ['PARMevs'], 'metplus_config',
                                 'machine.conf')
-    conf_file = os.path.join(os.environ['PARMevs'], 'metplus_config',
-                             os.environ['STEP'],
-                             os.environ['COMPONENT'],
-                             os.environ['VERIF_CASE'],
-                             conf_file_name)
+    if os.environ['STEP'] == 'prep':
+        conf_file = os.path.join(os.environ['PARMevs'], 'metplus_config',
+                                 os.environ['STEP'],
+                                 os.environ['COMPONENT'],
+                                 'grid2grid',
+                                 conf_file_name)
+    else:
+        conf_file = os.path.join(os.environ['PARMevs'], 'metplus_config',
+                                 os.environ['STEP'],
+                                 os.environ['COMPONENT'],
+                                 os.environ['VERIF_CASE'],
+                                 conf_file_name)
     if not os.path.exists(conf_file):
         print("FATAL ERROR: "+conf_file+" DOES NOT EXIST")
         sys.exit(1)
@@ -98,14 +105,18 @@ def check_file_exists_size(file_name):
                        - False: file doesn't exist
                                 OR file size = 0
     """
+    if '/com/' in file_name or '/dcom/' in file_name:
+        alert_word = 'WARNING'
+    else:
+        alert_word = 'NOTE'
     if os.path.exists(file_name):
         if os.path.getsize(file_name) > 0:
             file_good = True
         else:
-            print("WARNING: "+file_name+" empty, 0 sized")
+            print(f"{alert_word}: {file_name} empty, 0 sized")
             file_good = False
     else:
-        print("WARNING: "+file_name+" does not exist")
+        print(f"{alert_word}: {file_name} does not exist")
         file_good = False
     return file_good
 
@@ -787,7 +798,7 @@ def prep_prod_ghrsst_ospo_file(daily_source_file, daily_dest_file,
     daily_prepped_file = os.path.join(os.getcwd(), 'atmos.'
                                       +daily_source_file.rpartition('/')[2])
     # Prep daily file
-    if os.path.exists(daily_source_file):
+    if check_file_exists_size(daily_source_file):
         copy_file(daily_source_file, daily_prepped_file)
     else:
         log_missing_file_obs(log_missing_file, daily_source_file,
@@ -1062,7 +1073,7 @@ def get_truth_file(valid_time_dt, source_file_format, dest_file_format):
             print("WARNING: "+source_file+" DOES NOT EXIST")
 
 
-def check_prep_files(job_dict):
+def check_gefs_prep_files(job_dict):
     """! Check if COMOUT GEFS prep files exist and adjust fhr_list
 
          Args:
@@ -1081,7 +1092,7 @@ def check_prep_files(job_dict):
     inithr = job_dict['init_hr_start']
     fhr_min = int(job_dict['fhr_start'])
     fhr_max = int(job_dict['fhr_end'])
-    fhr_inc = 12
+    fhr_inc = 6
     fhr = fhr_min
     fhr_list = []
     fhr_check_output_dict = {}
@@ -1145,6 +1156,53 @@ def check_prep_files(job_dict):
         np.asarray(np.unique(np.asarray(fhr_list, dtype=int)),dtype=str)
     )
     return fhr_list
+
+
+def check_ccpa_prep_files(DATA, STEP, INITDATE):
+    """!
+        Args:
+            DATA     - Temporary working directory (string)
+            STEP     - Step (string)
+            INITDATE - Initialization date (string, format: YYYYmmdd)
+
+        Returns:
+            all_ccpa_file_exist - if all needed ccpa files
+                                  exist or not (boolean)
+    """
+    cdate_dt = datetime.datetime.strptime(
+        INITDATE+'12',
+        '%Y%m%d%H'
+    )
+    temp_dir = os.path.join(
+        DATA, STEP
+    )
+    ccpa_file_list = []
+    ccpa_file_format = os.path.join(
+        temp_dir, 'data', 'ccpa',
+        'ccpa.6H.{init?fmt=%Y%m%d%H}'
+    )
+    nf = 0
+    while nf <= 3:
+        ccpa_file = format_filler(
+            ccpa_file_format,
+            (cdate_dt-datetime.timedelta(hours=6*nf)),
+            (cdate_dt-datetime.timedelta(hours=6*nf)),
+            ['anl'], {}
+        )
+        ccpa_file_list.append(ccpa_file)
+        nf+=1
+    ccpa_files_exist_list = []
+    for ccpa_file in ccpa_file_list:
+        if os.path.exists(ccpa_file):
+            ccpa_files_exist_list.append(True)
+        else:
+            ccpa_files_exist_list.append(False)
+    if all(x == True for x in ccpa_files_exist_list) \
+            and len(ccpa_files_exist_list) > 0:
+        all_ccpa_file_exist = True
+    else:
+        all_ccpa_file_exist = False
+    return all_ccpa_file_exist
 
 
 def check_daily_model_files(job_dict):
@@ -2513,6 +2571,105 @@ def check_model_files(job_dict):
                         +'valid{valid_shift?fmt=%Y%m%d%H?shift=-720}'
                         +'to{valid?fmt=%Y%m%d%H}.nc'
                     )
+                elif job_dict['VERIF_TYPE'] == 'pres_lvls' \
+                        and job_dict['job_name'] == 'WeeklyAvg_GeoHeight':
+                    input_file_format = os.path.join(verif_case_dir,
+                                                     'METplus_output',
+                                                     job_dict['RUN']+'.'
+                                                     +job_dict['DATE'],
+                                                     job_dict['MODEL'],
+                                                     job_dict['VERIF_CASE'],
+                                                     'grid_stat_'
+                                                     +job_dict['VERIF_TYPE']+'_'
+                                                     +'GeoHeightAnom'
+                                                     +'_{lead?fmt=%2H}0000L_'
+                                                     +'{valid?fmt=%Y%m%d}_'
+                                                     +'{valid?fmt=%H}0000V_'
+                                                     +'pairs.nc')
+                    output_DATA_file_format = os.path.join(
+                        verif_case_dir, 'METplus_output',
+                        job_dict['RUN']+'.'+job_dict['DATE'],
+                        model, job_dict['VERIF_CASE'], 'weekly_avg_'
+                        +job_dict['VERIF_TYPE']+'_'+job_dict['job_name']
+                        +'_init{init?fmt=%Y%m%d%H}_'
+                        +'valid{valid_shift?fmt=%Y%m%d%H?shift=-168}'
+                        +'to{valid?fmt=%Y%m%d%H}.nc'
+                    )
+                    output_COMOUT_file_format = os.path.join(
+                        job_dict['COMOUT'],
+                        job_dict['RUN']+'.'+job_dict['DATE'],
+                        model, job_dict['VERIF_CASE'], 'weekly_avg_'
+                        +job_dict['VERIF_TYPE']+'_'+job_dict['job_name']
+                        +'_init{init?fmt=%Y%m%d%H}_'
+                        +'valid{valid_shift?fmt=%Y%m%d%H?shift=-168}'
+                        +'to{valid?fmt=%Y%m%d%H}.nc'
+                    )
+                elif job_dict['VERIF_TYPE'] == 'pres_lvls' \
+                        and job_dict['job_name'] == 'Days6_10Avg_GeoHeight':
+                    input_file_format = os.path.join(verif_case_dir,
+                                                     'METplus_output',
+                                                     job_dict['RUN']+'.'
+                                                     +job_dict['DATE'],
+                                                     job_dict['MODEL'],
+                                                     job_dict['VERIF_CASE'],
+                                                     'grid_stat_'
+                                                     +job_dict['VERIF_TYPE']+'_'
+                                                     +'GeoHeightAnom'
+                                                     +'_{lead?fmt=%2H}0000L_'
+                                                     +'{valid?fmt=%Y%m%d}_'
+                                                     +'{valid?fmt=%H}0000V_'
+                                                     +'pairs.nc')
+                    output_DATA_file_format = os.path.join(
+                        verif_case_dir, 'METplus_output',
+                        job_dict['RUN']+'.'+job_dict['DATE'],
+                        model, job_dict['VERIF_CASE'], 'days6_10_avg_'
+                        +job_dict['VERIF_TYPE']+'_'+job_dict['job_name']
+                        +'_init{init?fmt=%Y%m%d%H}_'
+                        +'valid{valid_shift?fmt=%Y%m%d%H?shift=-120}'
+                        +'to{valid?fmt=%Y%m%d%H}.nc'
+                    )
+                    output_COMOUT_file_format = os.path.join(
+                        job_dict['COMOUT'],
+                        job_dict['RUN']+'.'+job_dict['DATE'],
+                        model, job_dict['VERIF_CASE'], 'days6_10_avg_'
+                        +job_dict['VERIF_TYPE']+'_'+job_dict['job_name']
+                        +'_init{init?fmt=%Y%m%d%H}_'
+                        +'valid{valid_shift?fmt=%Y%m%d%H?shift=-120}'
+                        +'to{valid?fmt=%Y%m%d%H}.nc'
+                    )
+                elif job_dict['VERIF_TYPE'] == 'pres_lvls' \
+                        and job_dict['job_name'] == 'Weeks3_4Avg_GeoHeight':
+                    input_file_format = os.path.join(verif_case_dir,
+                                                     'METplus_output',
+                                                     job_dict['RUN']+'.'
+                                                     +job_dict['DATE'],
+                                                     job_dict['MODEL'],
+                                                     job_dict['VERIF_CASE'],
+                                                     'grid_stat_'
+                                                     +job_dict['VERIF_TYPE']+'_'
+                                                     +'GeoHeightAnom'
+                                                     +'_{lead?fmt=%2H}0000L_'
+                                                     +'{valid?fmt=%Y%m%d}_'
+                                                     +'{valid?fmt=%H}0000V_'
+                                                     +'pairs.nc')
+                    output_DATA_file_format = os.path.join(
+                        verif_case_dir, 'METplus_output',
+                        job_dict['RUN']+'.'+job_dict['DATE'],
+                        model, job_dict['VERIF_CASE'], 'weeks3_4_avg_'
+                        +job_dict['VERIF_TYPE']+'_'+job_dict['job_name']
+                        +'_init{init?fmt=%Y%m%d%H}_'
+                        +'valid{valid_shift?fmt=%Y%m%d%H?shift=-336}'
+                        +'to{valid?fmt=%Y%m%d%H}.nc'
+                    )
+                    output_COMOUT_file_format = os.path.join(
+                        job_dict['COMOUT'],
+                        job_dict['RUN']+'.'+job_dict['DATE'],
+                        model, job_dict['VERIF_CASE'], 'weeks3_4_avg_'
+                        +job_dict['VERIF_TYPE']+'_'+job_dict['job_name']
+                        +'_init{init?fmt=%Y%m%d%H}_'
+                        +'valid{valid_shift?fmt=%Y%m%d%H?shift=-336}'
+                        +'to{valid?fmt=%Y%m%d%H}.nc'
+                    )
                 else:
                     input_file_format = os.path.join(verif_case_dir, 'data',
                                                      model, model
@@ -2540,6 +2697,7 @@ def check_model_files(job_dict):
                         and job_dict['job_name'] in ['WeeklyAvg_Concentration',
                                                      'WeeklyAvg_SST',
                                                      'WeeklyAvg_GeoHeightAnom',
+                                                     'WeeklyAvg_GeoHeight',
                                                      'WeeklyAvg_TempAnom2m']:
                     if str(fhr) in ['168', '336', '504', '672', '840']:
                         nf = 0
@@ -2576,6 +2734,7 @@ def check_model_files(job_dict):
                         }
                 elif job_dict['VERIF_TYPE'] in ['pres_lvls', 'anom'] \
                         and job_dict['job_name'] in ['Days6_10Avg_GeoHeightAnom',
+                                                     'Days6_10Avg_GeoHeight',
                                                      'Days6_10Avg_TempAnom2m']:
                     if fhr == 240:
                         nf = 0
@@ -2594,6 +2753,7 @@ def check_model_files(job_dict):
                         }
                 elif job_dict['VERIF_TYPE'] in ['pres_lvls', 'anom'] \
                         and job_dict['job_name'] in ['Weeks3_4Avg_GeoHeightAnom',
+                                                     'Weeks3_4Avg_GeoHeight',
                                                      'Weeks3_4Avg_TempAnom2m']:
                     if fhr == 672:
                         nf = 0
@@ -2634,8 +2794,12 @@ def check_model_files(job_dict):
                     +job_dict['job_name']+'_{lead?fmt=%2H}'
                     '0000L_{valid?fmt=%Y%m%d_%H%M%S}V.stat'
                 )
-                if job_dict['VERIF_TYPE'] in ['pres_lvls', 'anom'] \
-                        and job_dict['job_name'] in ['WeeklyAvg_GeoHeightAnom',
+                if job_dict['VERIF_TYPE'] in ['sst', 'seaice',
+                                              'pres_lvls', 'anom'] \
+                        and job_dict['job_name'] in ['WeeklyAvg_SST',
+                                                     'WeeklyAvg_Concentration',
+                                                     'WeeklyAvg_GeoHeightAnom',
+                                                     'WeeklyAvg_GeoHeight',
                                                      'WeeklyAvg_TempAnom2m']:
                     input_file_format = os.path.join(
                         verif_case_dir, 'METplus_output',
@@ -2648,6 +2812,7 @@ def check_model_files(job_dict):
                     )
                 elif job_dict['VERIF_TYPE'] in ['pres_lvls', 'anom'] \
                         and job_dict['job_name'] in ['Days6_10Avg_GeoHeightAnom',
+                                                     'Days6_10Avg_GeoHeight',
                                                      'Days6_10Avg_TempAnom2m']:
                     input_file_format = os.path.join(
                         verif_case_dir, 'METplus_output',
@@ -2660,6 +2825,7 @@ def check_model_files(job_dict):
                     )
                 elif job_dict['VERIF_TYPE'] in ['pres_lvls', 'anom'] \
                         and job_dict['job_name'] in ['Weeks3_4Avg_GeoHeightAnom',
+                                                     'Weeks3_4Avg_GeoHeight',
                                                      'Weeks3_4Avg_TempAnom2m']:
                     input_file_format = os.path.join(
                         verif_case_dir, 'METplus_output',
@@ -2670,18 +2836,18 @@ def check_model_files(job_dict):
                         +'valid{valid_shift?fmt=%Y%m%d%H?shift=-336}'
                         +'to{valid?fmt=%Y%m%d%H}.nc'
                     )
-                elif job_dict['VERIF_TYPE'] in ['sst', 'seaice'] \
-                        and job_dict['job_name'] in ['WeeklyAvg_SST',
-                                                     'WeeklyAvg_Concentration']:
-                    input_file_format = os.path.join(
-                        verif_case_dir, 'METplus_output',
-                        job_dict['RUN']+'.'+job_dict['DATE'],
-                        model, job_dict['VERIF_CASE'], 'weekly_avg_'
-                        +job_dict['VERIF_TYPE']+'_'+job_dict['job_name']
-                        +'_init{init?fmt=%Y%m%d%H}_'
-                        +'valid{valid_shift?fmt=%Y%m%d%H?shift=-168}'
-                        +'to{valid?fmt=%Y%m%d%H}.nc'
-                    )
+                #elif job_dict['VERIF_TYPE'] in ['sst', 'seaice'] \
+                        #and job_dict['job_name'] in ['WeeklyAvg_SST',
+                                                     #'WeeklyAvg_Concentration']:
+                    #input_file_format = os.path.join(
+                        #verif_case_dir, 'METplus_output',
+                        #job_dict['RUN']+'.'+job_dict['DATE'],
+                        #model, job_dict['VERIF_CASE'], 'weekly_avg_'
+                        #+job_dict['VERIF_TYPE']+'_'+job_dict['job_name']
+                        #+'_init{init?fmt=%Y%m%d%H}_'
+                        #+'valid{valid_shift?fmt=%Y%m%d%H?shift=-168}'
+                        #+'to{valid?fmt=%Y%m%d%H}.nc'
+                    #)
                 elif job_dict['VERIF_TYPE'] in ['sst', 'seaice'] \
                         and job_dict['job_name'] in ['MonthlyAvg_SST',
                                                      'MonthlyAvg_Concentration']:
@@ -2727,6 +2893,7 @@ def check_model_files(job_dict):
                         and job_dict['job_name'] in ['WeeklyAvg_Concentration',
                                                      'WeeklyAvg_SST',
                                                      'WeeklyAvg_GeoHeightAnom',
+                                                     'WeeklyAvg_GeoHeight',
                                                      'WeeklyAvg_TempAnom2m']:
                     if str(fhr) in ['168', '336', '504', '672', '840']:
                         fhr_check_input_dict[str(fhr)]['file1'] = {
@@ -2755,6 +2922,7 @@ def check_model_files(job_dict):
                         }
                 elif job_dict['VERIF_TYPE'] in ['pres_lvls', 'anom'] \
                         and job_dict['job_name'] in ['Days6_10Avg_GeoHeightAnom',
+                                                     'Days6_10Avg_GeoHeight',
                                                      'Days6_10Avg_TempAnom2m']:
                     if fhr == 240:
                         fhr_check_input_dict[str(fhr)]['file1'] = {
@@ -2769,6 +2937,7 @@ def check_model_files(job_dict):
                         }
                 elif job_dict['VERIF_TYPE'] in ['pres_lvls', 'anom'] \
                         and job_dict['job_name'] in ['Weeks3_4Avg_GeoHeightAnom',
+                                                     'Weeks3_4Avg_GeoHeight',
                                                      'Weeks3_4Avg_TempAnom2m']:
                     if fhr == 672:
                         fhr_check_input_dict[str(fhr)]['file1'] = {
@@ -2963,7 +3132,8 @@ def check_model_files(job_dict):
                     )
                 elif job_dict['JOB_GROUP'] == 'assemble_data' \
                         and job_dict['job_name'] in ['TempAnom2m',
-                                                     'GeoHeightAnom']:
+                                                     'GeoHeightAnom',
+                                                     'GeoHeight']:
                     fhr_list.append(
                         fhr_check_input_dict[fhr_key][fhr_fileN_key]\
                         ['forecast_hour']
@@ -3726,56 +3896,6 @@ def get_obs_valid_hrs(obs):
         print(f"FATAL ERROR: Cannot get {obs} valid hour information")
         sys.exit(1)
     return valid_hr_start, valid_hr_end, valid_hr_inc
-
-def get_off_machine_data(job_file, job_name, job_output, machine, user, queue,
-                         account):
-    """! This submits a job to the transfer queue
-         to get data that does not reside on current machine
-         Args:
-             job_file   - path to job submission file (string)
-             job_name   - job submission name (string)
-             job_output - path to write job output (string)
-             machine    - machine name (string)
-             user       - user name (string)
-             queue      - submission queue name (string)
-             account    - submission account name (string)
-         Returns:
-    """
-    # Set up job wall time information
-    walltime = '60'
-    walltime_seconds = (
-        datetime.timedelta(minutes=int(walltime)).total_seconds()
-    )
-    walltime = (datetime.datetime.min
-                + datetime.timedelta(minutes=int(walltime))).time()
-    # Submit job
-    print("Submitting "+job_file+" to "+queue)
-    print("Output sent to "+job_output)
-    os.chmod(job_file, 0o755)
-    if machine == 'WCOSS2':
-        os.system('qsub -V -l walltime='+walltime.strftime('%H:%M:%S')+' '
-                  +'-q '+queue+' -A '+account+' -o '+job_output+' '
-                  +'-e '+job_output+' -N '+job_name+' '
-                  +'-l select=1:ncpus=1 '+job_file)
-        job_check_cmd = ('qselect -s QR -u '+user+' '+'-N '
-                         +job_name+' | wc -l')
-    elif machine in ['HERA', 'ORION', 'S4', 'JET']:
-        os.system('sbatch --ntasks=1 --time='
-                  +walltime.strftime('%H:%M:%S')+' --partition='+queue+' '
-                  +'--account='+account+' --output='+job_output+' '
-                  +'--job-name='+job_name+' '+job_file)
-        job_check_cmd = ('squeue -u '+user+' -n '+job_name+' '
-                         +'-t R,PD -h | wc -l')
-    sleep_counter, sleep_checker = 1, 10
-    while (sleep_counter*sleep_checker) <= walltime_seconds:
-        sleep(sleep_checker)
-        print("Walltime checker: "+str(sleep_counter*sleep_checker)+" "
-              +"out of "+str(int(walltime_seconds))+" seconds")
-        check_job = subprocess.check_output(job_check_cmd, shell=True,
-                                            encoding='UTF-8')
-        if check_job[0] == '0':
-            break
-        sleep_counter+=1
 
 def initialize_prep_job_env_dict(verif_type, group,
                                  job):
