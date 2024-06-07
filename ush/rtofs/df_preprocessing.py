@@ -53,7 +53,7 @@ def get_valid_range(logger, date_type, date_range, date_hours, fleads):
 
 def run_prune_data(logger, stats_dir, prune_dir, output_base_template, verif_case, 
                    verif_type, line_type, valid_range, eval_period, var_name, 
-                   fcst_var_names, model_list, obtype, domain):
+                   fcst_var_names, model_list, obtype, domain, interp):
     model_list = [str(model) for model in model_list]
     tmp_dir = 'tmp'+str(uuid.uuid4().hex)
     pruned_data_dir = os.path.join(
@@ -94,14 +94,17 @@ def run_prune_data(logger, stats_dir, prune_dir, output_base_template, verif_cas
 def check_empty(df, logger, called_from):
     if df.empty:
         logger.warning(f"Called from {called_from}:")
-        logger.warning(f"Empty Dataframe. Continuing onto next plot...")
+        logger.warning(f"Empty Dataframe encountered while filtering a subset"
+                       + f" of input statistics..."
         logger.info("========================================")
         return True
     else:
         return False
 
 def create_df(logger, stats_dir, pruned_data_dir, line_type, date_range, 
-              model_list, met_version, clear_prune_dir):
+              model_list, met_version, clear_prune_dir, verif_type,
+              fcst_var_names, obs_var_names, interp, domain, date_type, 
+              date_hours):
     model_list = [str(model) for model in model_list]
     # Create df combining pruned stats for all models in model_list
     start_string = date_range[0].strftime('%HZ %d %B %Y')
@@ -109,8 +112,11 @@ def create_df(logger, stats_dir, pruned_data_dir, line_type, date_range,
     for model in model_list:
         fpath = os.path.join(pruned_data_dir,f'{str(model)}.stat')
         if not os.path.isfile(fpath):
-            logger.warning(
-                f"The stat file for {str(model)} does not exist in"
+            if not any(
+                    group_name in str(model) for group_name in ["group", "set"]
+                ):
+                logger.warning(
+                f"{str(model)} is not a model in"
                 + f" {pruned_data_dir}."
             )
             logger.warning(
@@ -125,7 +131,7 @@ def create_df(logger, stats_dir, pruned_data_dir, line_type, date_range,
         try:
             df_og_colnames = plot_util.get_stat_file_base_columns(met_version)
             df_line_type_colnames = plot_util.get_stat_file_line_type_columns(
-                logger, met_version, str(line_type).upper()
+                logger, met_version, str(line_type).upper(),df_og_colnames,fpath
             )
             df_colnames = np.concatenate((
                 df_og_colnames, df_line_type_colnames
@@ -137,12 +143,21 @@ def create_df(logger, stats_dir, pruned_data_dir, line_type, date_range,
             i = -1*len(df_line_type_colnames)
             for col_name in df_colnames[i:]:
                 df_tmp[col_name] = df_tmp[col_name].astype(float)
+            df_tmp = run_filters(
+                df_tmp, logger, verif_type, fcst_var_names, obs_var_names,
+                interp, domain, date_type, date_range, date_hours
+            )
             try:
                 df = pd.concat([df, df_tmp])
             except NameError:
                 df = df_tmp
             except UnboundLocalError as e:
                 df = df_tmp
+            logger.debug(plot_util.get_memory_usage())
+            total_memory, _, _ = map(
+                int, os.popen('free -t -m').readlines()[-1].split()[1:]
+            )
+             logger.debug(f"RAM memory available: {total_memory}")
         except pd.errors.EmptyDataError as e:
             logger.warning(e)
             logger.warning(f"The file in question:")
@@ -254,8 +269,11 @@ def filter_by_date_range(df, logger, date_type, date_range):
 def filter_by_hour(df, logger, date_type, date_hours):
     if df is None:
         return df
-    df = df.loc[[x in date_hours for x in df[str(date_type).upper()].dt.hour]]
     if check_empty(df, logger, 'filter_by_hour'):
+        return df
+    else:
+        df = df.loc[[x in date_hours for x in df[str(date_type).upper()].dt.hour]]
+    check_empty(df, logger, 'filter_by_hour')
     return df
 
 def get_preprocessed_data(logger, stats_dir, prune_dir, output_base_template, 
@@ -273,8 +291,15 @@ def get_preprocessed_data(logger, stats_dir, prune_dir, output_base_template,
     )
     df = create_df(
         logger, stats_dir, pruned_data_dir, line_type, date_range, model_list,
-        met_version, clear_prune_dir
+        met_version, clear_prune_dir, verif_type, fcst_var_names, obs_var_names,
+        interp, domain, date_type, date_hours
     )
+    if df is not None and check_empty(df, logger, 'get_preprocessed_data'):
+        df = None
+    return df
+
+def run_filters(df, logger, verif_type, fcst_var_names, obs_var_names,
+                interp, domain, date_type, date_range, date_hours):
     df = filter_by_level_type(df, logger, verif_type)
     df = filter_by_var_name(df, logger, fcst_var_names, obs_var_names)
     df = filter_by_interp(df, logger, interp)
