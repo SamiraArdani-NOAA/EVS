@@ -98,7 +98,7 @@ tmp_glwu_ndbc_files = glob.glob(os.path.join(ndbc_for_glwu,"*.txt"))
 for tmp_buoy_file in tmp_glwu_ndbc_files:
     tmp_id = tmp_buoy_file.rpartition('/')[2].partition('.')[0]
     dfff = pd.read_csv(tmp_buoy_file, sep=" ",skiprows=2, skipinitialspace=True,keep_default_na=False, dtype='str', header=None)
-    new_df = dfff.loc[(dfff[0] == INITDATE_Y)& (dfff[1] == INITDATE_M)& (dfff[2] == INITDATE_D)& (dfff[4] == '00')]
+    new_df = dfff.loc[(dfff[0] == INITDATE_Y)& (dfff[1] == INITDATE_M)& (dfff[2] == INITDATE_D)]
     tmp_glwu_ndbc = os.path.join (ndbc_for_glwu,f'{tmp_id}_edited.txt')
     tmp_glwu_ndbc_final = open (tmp_glwu_ndbc, 'w')
     tmp_glwu_ndbc_final.write(ndbc_header1)
