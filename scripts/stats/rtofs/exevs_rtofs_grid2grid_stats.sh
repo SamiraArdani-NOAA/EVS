@@ -92,7 +92,7 @@ if [ $OBTYPE = osisaf ]; then
 else
 
 	if [ $OBTYPE = smos ]; then
-		DCOMINrtofsfilename=$DCOMROOT/$VDATE/validation_data/marine/smos/SM_D${JDATE}_Map_SATSSS_data_1day.nc
+		DCOMINrtofsfilename=$obsdata/validation_data/marine/smos/SM_D${JDATE}_Map_SATSSS_data_1day.nc
 		COMINicefilename=$COMIN/prep/$COMPONENT/rtofs.$VDATE/$OBTYPE/rtofs_glo_2ds_f000_ice.$OBTYPE.nc
 		export ftype="prog"
 		export VARS="sss"
@@ -100,7 +100,7 @@ else
 		CLIMO=WOA23
 
 	elif [ $OBTYPE = smap ]; then
-		DCOMINrtofsfilename=$DCOMROOT/$VDATE/validation_data/marine/smap/SP_D${JDATE}_Map_SATSSS_data_1day.nc
+		DCOMINrtofsfilename=$obsdata/validation_data/marine/smap/SP_D${JDATE}_Map_SATSSS_data_1day.nc
 		COMINicefilename=$COMIN/prep/$COMPONENT/rtofs.$VDATE/$OBTYPE/rtofs_glo_2ds_f000_ice.$OBTYPE.nc
 		export ftype="prog"
 		export VARS="sss"
@@ -108,7 +108,7 @@ else
 		CLIMO=WOA23
 
 	elif [ $OBTYPE = ghrsst ]; then
-		DCOMINrtofsfilename=$DCOMROOT/$VDATE/validation_data/marine/ghrsst/${VDATE}_OSPO_L4_GHRSST.nc
+		DCOMINrtofsfilename=$obsdata/validation_data/marine/ghrsst/${VDATE}_OSPO_L4_GHRSST.nc
 		COMINicefilename=$COMIN/prep/$COMPONENT/rtofs.$VDATE/$OBTYPE/rtofs_glo_2ds_f000_ice.$OBTYPE.nc
 		export ftype="prog"
 		export VARS="sst"
@@ -116,7 +116,7 @@ else
 		CLIMO=WOA23
 
 	elif [ $OBTYPE = aviso ]; then
-		DCOMINrtofsfilename=$DCOMROOT/$VDATE/validation_data/marine/cmems/ssh/nrt_global_allsat_phy_l4_${VDATE}_${VDATE}.nc
+		DCOMINrtofsfilename=$obsdata/validation_data/marine/cmems/ssh/nrt_global_allsat_phy_l4_${VDATE}_${VDATE}.nc
 		COMINicefilename=$COMIN/prep/$COMPONENT/rtofs.$VDATE/$OBTYPE/rtofs_glo_2ds_f000_ice.$OBTYPE.nc
 		export ftype="diag"
 		export VARS="ssh"

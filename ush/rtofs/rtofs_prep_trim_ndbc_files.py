@@ -43,10 +43,10 @@ for line in open(MET_NDBC_STATIONS, 'r'):
 
 # Trim down files for single date
 # and only include those with location data
-for ndbc_input_file in glob.glob(os.path.join(DCOMROOT,
-                                             f"{INITDATE_dt:%Y%m%d}",
-                                             'validation_data', 'marine',
-                                             'buoy', '*.txt')):
+for ndbc_input_file in glob.glob(os.path.join(DATA,
+                                             f"rtofs.{INITDATE_dt:%Y%m%d}",
+                                             OBTYPE,
+                                             'dcom_buoy', '*.txt')):
     buoy_id = ndbc_input_file.rpartition('/')[2].partition('.')[0]
     if buoy_id not in buoy_with_loc_list:
         continue
