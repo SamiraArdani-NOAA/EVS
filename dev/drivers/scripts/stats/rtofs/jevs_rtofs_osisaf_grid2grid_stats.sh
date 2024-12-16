@@ -17,6 +17,7 @@ source $HOMEevs/versions/run.ver
 
 module reset
 module load prod_envir/${prod_envir_ver}
+export DCOMROOT=/lfs/h2/emc/vpppg/noscrub/samira.ardani/obs_data
 
 export KEEPDATA=YES
 export SENDMAIL=YES
@@ -38,6 +39,7 @@ evs_ver_2d=$(echo $evs_ver | cut -d'.' -f1-2)
 export COMIN=/lfs/h2/emc/vpppg/noscrub/$USER/$NET/${evs_ver_2d}
 export COMOUT=/lfs/h2/emc/vpppg/noscrub/$USER/$NET/${evs_ver_2d}
 export DATAROOT=/lfs/h2/emc/stmp/${USER}/evs_test/$envir/tmp
+export obsdata=/lfs/h2/emc/vpppg/noscrub/samira.ardani/obs_data
 
 export job=${PBS_JOBNAME:-jevs_${MODELNAME}_${VERIF_CASE}_${STEP}}
 export jobid=$job.${PBS_JOBID:-$$}
