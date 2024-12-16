@@ -902,6 +902,7 @@ def plot_performance_diagram(df: pd.DataFrame, logger: logging.Logger,
 
     # Saving
     models_savename = '_'.join([str(model) for model in model_list])
+    models_savename = str("rtofs")
     if len(date_hours) <= 8: 
         date_hours_savename = '_'.join([
             f'{date_hour:02d}Z' for date_hour in date_hours
