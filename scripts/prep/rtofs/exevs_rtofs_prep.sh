@@ -106,7 +106,11 @@ for rcase in ghrsst smos smap aviso osisaf ndbc argo; do
         	fi
         	mkdir -p $DATA/rtofs.$INITDATE/$OBTYPE
         	for ftype in prog diag ice; do
-			rtofs_grid_file=$FIXevs/cdo_grids/rtofs_$OBTYPE.grid
+			if [ rcase = 'aviso' ]; then
+				rtofs_grid_file=$HOMEevs/rtofs_$OBTYPE.grid
+			else
+				rtofs_grid_file=$FIXevs/cdo_grids/rtofs_$OBTYPE.grid
+			fi
 			rtofs_native_filename=$EVSINprep/rtofs.$INITDATE/rtofs_glo_2ds_${lead}_${ftype}.nc
 			tmp_rtofs_latlon_filename=$DATA/rtofs.$INITDATE/$OBTYPE/rtofs_glo_2ds_f${fhr}_${ftype}.$OBTYPE.nc
 			output_rtofs_latlon_filename=$COMOUTprep/rtofs.$INITDATE/$OBTYPE/rtofs_glo_2ds_f${fhr}_${ftype}.$OBTYPE.nc
