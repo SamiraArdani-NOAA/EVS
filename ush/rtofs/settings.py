@@ -127,6 +127,13 @@ class Presets():
                 'init_beg': (datetime.now()-td(days=3)).strftime('%Y%m%d'),
                 'init_end': (datetime.now()-td(days=1)).strftime('%Y%m%d')
             },
+            'recentdays': {
+                'valid_beg': '20240705',
+                'valid_end': (datetime.now()-td(days=1)).strftime('%Y%m%d'),
+                'init_beg':  '20240705',
+                'init_end': (datetime.now()-td(days=1)).strftime('%Y%m%d')
+            },
+
             '2020': {
                 'valid_beg': '20200101',
                 'valid_end': '20201231',

@@ -116,7 +116,7 @@ else
 		CLIMO=WOA23
 
 	elif [ $OBTYPE = aviso ]; then
-		DCOMINrtofsfilename=$obsdata/validation_data/marine/cmems/nrt_global_allsat_phy_l4_${VDATE}_${VDATE}.nc
+		DCOMINrtofsfilename=$obsdata/validation_data/marine/cmems/nrt_global_allsat_phy_l4_${VDATE}.nc
 		COMINicefilename=$COMIN/prep/$COMPONENT/rtofs.$VDATE/$OBTYPE/rtofs_glo_2ds_f000_ice.$OBTYPE.nc
 		export ftype="diag"
 		export VARS="ssh"

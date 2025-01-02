@@ -26,7 +26,8 @@ mkdir -p $DATA/logs/rtofs
 export MET_VERSION_major_minor=$(echo $MET_VERSION | sed "s/\([^.]*\.[^.]*\)\..*/\1/g")
 
 # set up plot variables
-export PERIOD=last60days
+#export PERIOD=last60days
+export PERIOD=recentdays
 export THRESH=""
 export MASKS="GLB"
 #export MASKS="GLB, NATL, SATL, EQATL, NPAC, SPAC, EQPAC, IND, SOC, Arctic, MEDIT"
@@ -101,7 +102,7 @@ for lead in 000 024 048 072 096 120 144 168 192; do
 	else
 		var_name=salinity
 	fi
-	png_name1=evs.${COMPONENT}.${stats}.${var_name}_z${levl}_${obtype}.last60days.timeseries_valid00z_f${lead}.glb.png
+	png_name1=evs.${COMPONENT}.${stats}.${var_name}_z${levl}_${obtype}.${PERIOD}.timeseries_valid00z_f${lead}.glb.png
 	if [ ! -s $COMOUTplots/$STEP/$obtype/$PTYPE/$png_name1 ]; then
 	
           # make plots
@@ -191,7 +192,7 @@ for levl in 0 50 125 200 400 700 1000 1400; do
       else
 	 var_name=salinity
       fi
-      png_name2=evs.${COMPONENT}.${stats}.${var_name}_z${levl}_${obtype}.last60days.fhrmean_valid00z.glb.png
+      png_name2=evs.${COMPONENT}.${stats}.${var_name}_z${levl}_${obtype}.${PERIOD}.fhrmean_valid00z.glb.png
       if [ ! -s $COMOUTplots/$STEP/$obtype/$PTYPE/$png_name2 ]; then
       # make plots
 
