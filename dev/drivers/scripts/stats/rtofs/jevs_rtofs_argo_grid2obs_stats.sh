@@ -20,7 +20,7 @@ module load prod_envir/${prod_envir_ver}
 
 export DCOMROOT=/lfs/h2/emc/vpppg/noscrub/samira.ardani/obs_data
 export KEEPDATA=YES
-export SENDMAIL=YES
+export SENDMAIL=NO
 
 # specify environment variables
 export envir=prod
