@@ -23,7 +23,8 @@ mkdir -p $DATA/tmp/rtofs
 export MET_VERSION_major_minor=$(echo $MET_VERSION | sed "s/\([^.]*\.[^.]*\)\..*/\1/g")
 
 # set up plot variables
-export PERIOD=last60days
+#export PERIOD=last60days
+export PERIOD=recentdays
 export THRESH=""
 export MASKS="GLB, NATL, SATL, EQATL, NPAC, SPAC, EQPAC, IND, SOC, Arctic, MEDIT"
 
