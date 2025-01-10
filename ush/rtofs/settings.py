@@ -133,7 +133,18 @@ class Presets():
                 'init_beg':  '20240705',
                 'init_end': (datetime.now()-td(days=1)).strftime('%Y%m%d')
             },
-
+            'summer': {
+                'valid_beg': '20240705',
+                'valid_end': '20240930',
+                'init_beg':  '20240705',
+                'init_end':  '20240930'
+            },
+            'winter': {
+                'valid_beg': '20241001',
+                'valid_end': (datetime.now()-td(days=1)).strftime('%Y%m%d'),
+                'init_beg':  '20241001',
+                'init_end':  (datetime.now()-td(days=1)).strftime('%Y%m%d')
+            },
             '2020': {
                 'valid_beg': '20200101',
                 'valid_end': '20201231',
