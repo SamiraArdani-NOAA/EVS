@@ -127,6 +127,97 @@ done
 # plot mean vs. lead time
 export PTYPE=lead_average
 export FLEAD="000,024,048,072,096,120,144,168,192"
+export PERIOD=summer
+mkdir -p $COMOUTplots/$STEP/$obtype/$PTYPE
+
+for levl in 0 50 125 200 400 700 1000 1400; do
+  if [ $levl = 0 ] ; then
+    export FLVL=Z0
+    export OLVL=Z4-0
+  fi
+
+  if [ $levl = 50 ] ; then
+    export FLVL=Z50
+    export OLVL=Z52-48
+  fi
+
+  if [ $levl = 125 ] ; then
+    export FLVL=Z125
+    export OLVL=Z127-123
+  fi
+
+  if [ $levl = 200 ] ; then
+    export FLVL=Z200
+    export OLVL=Z202-198
+  fi
+
+  if [ $levl = 400 ] ; then
+    export FLVL=Z400
+    export OLVL=Z402-398
+  fi
+
+  if [ $levl = 700 ] ; then
+    export FLVL=Z700
+    export OLVL=Z702-698
+  fi
+
+  if [ $levl = 1000 ] ; then
+    export FLVL=Z1000
+    export OLVL=Z1003-997
+  fi
+
+  if [ $levl = 1400 ] ; then
+    export FLVL=Z1400
+    export OLVL=Z1403-1397
+  fi
+
+  for stats in me rmse acc; do
+    export METRIC=$stats
+
+    if [ $stats = 'me' ] ; then
+      export LTYPE=SL1L2
+    fi
+
+    if [ $stats = 'rmse' ] ; then
+      export LTYPE=SL1L2
+    fi
+
+    if [ $stats = 'acc' ] ; then
+      export LTYPE=SAL1L2
+    fi
+
+    for vari in TEMP PSAL; do
+      export VAR=$vari
+      if [ $VAR = TEMP ]; then
+         var_name=temperature
+      else
+	 var_name=salinity
+      fi
+      png_name2=evs.${COMPONENT}.${stats}.${var_name}_z${levl}_${obtype}.${PERIOD}.fhrmean_valid00z.glb.png
+      if [ ! -s $COMOUTplots/$STEP/$obtype/$PTYPE/$png_name2 ]; then
+      # make plots
+
+        $CONFIGevs/$STEP/$COMPONENT/${VERIF_CASE}/verif_plotting.rtofs.conf
+        export err=$?; err_chk
+        if [ -s $DATA/$STEP/$COMPONENT/$COMPONENT.$VDATE/$obtype/$png_name2 ]; then
+	   cp -v $DATA/$STEP/$COMPONENT/$COMPONENT.$VDATE/$obtype/$png_name2 $COMOUTplots/$STEP/$obtype/$PTYPE/$png_name2
+	else
+           echo "WARNING: Plot $png_name2 was not generated."
+	fi
+      else
+	echo "RESTART: Copying the files"
+	cp -v $COMOUTplots/$STEP/$obtype/$PTYPE/$png_name2 $DATA/$STEP/$COMPONENT/$COMPONENT.$VDATE/$obtype/$png_name2
+      fi
+
+    done
+  done
+done
+
+
+# plot mean vs. lead time
+export PTYPE=lead_average
+export FLEAD="000,024,048,072,096,120,144,168,192"
+export PERIOD=winter
 mkdir -p $COMOUTplots/$STEP/$obtype/$PTYPE
 
 for levl in 0 50 125 200 400 700 1000 1400; do
@@ -224,6 +315,7 @@ if [[ $log_file_count -ne 0 ]]; then
 fi
 
 # tar all plots together
+export PERIOD=recentdays
 
 cd $DATA/plots/$COMPONENT/rtofs.$VDATE/$obtype
 tar -cvf evs.plots.$COMPONENT.$obtype.${VERIF_CASE}.$PERIOD.v$VDATE.tar *.png

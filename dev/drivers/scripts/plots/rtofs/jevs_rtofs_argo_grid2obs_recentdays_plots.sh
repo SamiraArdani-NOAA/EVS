@@ -12,7 +12,7 @@
 ############################################################
 set -x
 
-export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/EVS_RTOFS_v2.5
+export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/EVS_RTOFS_v2.5_final
 source $HOMEevs/versions/run.ver
 
 module reset

@@ -74,7 +74,35 @@ done
 # plot mean vs. lead time
 export PTYPE=lead_average
 export FLEAD="000,024,048,072,096,120,144,168,192"
+export PERIOD=summer
+for stats in me rmse; do
+  export METRIC=$stats
+  export LTYPE=SL1L2
+  export THRESH=""
 
+# make plots
+  $CONFIGevs/$STEP/$COMPONENT/${VERIF_CASE}/verif_plotting.rtofs.conf
+  export err=$?; err_chk
+done
+
+for stats in csi; do
+  export METRIC=$stats
+  export LTYPE=CTC
+
+  for thre in ">=15" ">=40" ">=80"; do
+    export THRESH=$thre
+
+# make plots
+    $CONFIGevs/$STEP/$COMPONENT/${VERIF_CASE}/verif_plotting.rtofs.conf
+    export err=$?; err_chk
+  done
+done
+
+
+# plot mean vs. lead time
+export PTYPE=lead_average
+export FLEAD="000,024,048,072,096,120,144,168,192"
+export PERIOD=winter
 for stats in me rmse; do
   export METRIC=$stats
   export LTYPE=SL1L2
@@ -110,6 +138,7 @@ if [[ $log_file_count -ne 0 ]]; then
 fi
 
 export obtype=`echo $OBTYPE |tr '[A-Z]' '[a-z]'`
+export PERIOD=recentdays
 
 # tar all plots together
 cd $DATA/plots/$COMPONENT/rtofs.$VDATE/$obtype
