@@ -35,7 +35,6 @@ DATA = os.environ['DATA']
 RESTART_DIR = os.environ['RESTART_DIR']
 VDATE = os.environ['VDATE']
 MET_PLUS_CONF = os.environ['MET_PLUS_CONF']
-MET_PLUS_OUT = os.environ['MET_PLUS_OUT']
 MET_CONFIG_OVERRIDES = os.environ['MET_CONFIG_OVERRIDES']
 metplus_launcher = 'run_metplus.py'
 machine_conf = os.path.join(
@@ -54,6 +53,9 @@ if job_type == 'reformat':
     MIN_IHOUR = os.environ['MIN_IHOUR']
     COMINobs = os.environ['COMINobs']
     njob = os.environ['njob']
+    MET_PLUS_OUT = os.path.join(
+        os.environ['MET_PLUS_OUT'], 'workdirs', job_type, f'job{njob}'
+    )
     USHevs = os.environ['USHevs']
     SKIP_IF_OUTPUT_EXISTS = os.environ['SKIP_IF_OUTPUT_EXISTS']
     if NEST == 'spc_otlk':
@@ -83,6 +85,9 @@ elif job_type == 'generate':
     if NEST not in ['firewx', 'spc_otlk']:
         MASK_POLY_LIST = os.environ['MASK_POLY_LIST']
     njob = os.environ['njob']
+    MET_PLUS_OUT = os.path.join(
+        os.environ['MET_PLUS_OUT'], 'workdirs', job_type, f'job{njob}'
+    )
     GRID = os.environ['GRID']
     USHevs = os.environ['USHevs']
     if NEST == 'spc_otlk':
@@ -96,10 +101,19 @@ elif job_type == 'generate':
 elif job_type == 'gather':
     VERIF_TYPE = os.environ['VERIF_TYPE']
     njob = os.environ['njob']
+    MET_PLUS_OUT = os.path.join(
+        os.environ['MET_PLUS_OUT'], 'workdirs', job_type, f'job{njob}'
+    )
 elif job_type == 'gather2':
     njob = os.environ['njob']
+    MET_PLUS_OUT = os.path.join(
+        os.environ['MET_PLUS_OUT'], 'workdirs', job_type, f'job{njob}'
+    )
 elif job_type == 'gather3':
     njob = os.environ['njob']
+    MET_PLUS_OUT = os.path.join(
+        os.environ['MET_PLUS_OUT'], 'workdirs', job_type, f'job{njob}'
+    )
     COMOUTsmall = os.environ['COMOUTsmall']
 
 # Get expanded details from variable name
@@ -262,7 +276,8 @@ elif job_type == 'generate':
             'dependent_vars': {
                 'names': ['MASK_POLY_LIST'],
                 'values': [(
-                    f'{MET_PLUS_OUT}/{VERIF_TYPE}/genvxmask/{NEST}.'
+                    f'{DATA}/{VERIF_CASE}/METplus_output/{VERIF_TYPE}'
+                    + f'/genvxmask/{NEST}.'
                     + '${VDATE}'+ f'/{NEST}_t{VHOUR}z_'+ 'f${FHR}.nc'
                 )],
             }
@@ -327,6 +342,7 @@ elif STEP == 'stats':
                     f'#python -c '
                     + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                     + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                    + f'njob=\\\"{njob}\\\", '
                     + 'verif_case=\\\"${VERIF_CASE}\\\", '
                     + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                     + 'vx_mask=\\\"${NEST}\\\", '
@@ -354,6 +370,7 @@ elif STEP == 'stats':
                         f'#python -c '
                         + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                         + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                        + f'njob=\\\"{njob}\\\", '
                         + 'verif_case=\\\"${VERIF_CASE}\\\", '
                         + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                         + 'vx_mask=\\\"${NEST}\\\", '
@@ -381,6 +398,7 @@ elif STEP == 'stats':
                         f'python -c '
                         + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                         + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                        + f'njob=\\\"{njob}\\\", '
                         + 'verif_case=\\\"${VERIF_CASE}\\\", '
                         + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                         + 'vx_mask=\\\"${NEST}\\\", '
@@ -411,6 +429,7 @@ elif STEP == 'stats':
                 f'#python -c '
                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                + f'njob=\\\"{njob}\\\", '
                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -435,6 +454,7 @@ elif STEP == 'stats':
                     f'#python -c '
                     + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                     + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                    + f'njob=\\\"{njob}\\\", '
                     + 'verif_case=\\\"${VERIF_CASE}\\\", '
                     + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                     + 'vx_mask=\\\"${NEST}\\\", '
@@ -459,6 +479,7 @@ elif STEP == 'stats':
                     f'python -c '
                     + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                     + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                    + f'njob=\\\"{njob}\\\", '
                     + 'verif_case=\\\"${VERIF_CASE}\\\", '
                     + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                     + 'vx_mask=\\\"${NEST}\\\", '
@@ -486,10 +507,11 @@ elif STEP == 'stats':
                         + f'PointStat_fcst{COMPONENT.upper()}_'
                         + f'obs{VERIF_TYPE.upper()}_{str(NEST).upper()}_VAR2.conf'
                     )
-                    job_cmd_list.append(
+                    job_cmd_list_iterative.append(
                         f'#python -c '
                         + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                         + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                        + f'njob=\\\"{njob}\\\", '
                         + 'verif_case=\\\"${VERIF_CASE}\\\", '
                         + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                         + 'vx_mask=\\\"${NEST}\\\", '
@@ -516,10 +538,11 @@ elif STEP == 'stats':
                             + f'PointStat_fcst{COMPONENT.upper()}_'
                             + f'obs{VERIF_TYPE.upper()}_{str(NEST).upper()}_VAR2.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -546,10 +569,11 @@ elif STEP == 'stats':
                             + f'PointStat_fcst{COMPONENT.upper()}_'
                             + f'obs{VERIF_TYPE.upper()}_{str(NEST).upper()}_VAR2.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -583,10 +607,11 @@ elif STEP == 'stats':
                         + f'-c {MET_PLUS_CONF}/'
                         + f'PointStat_fcst{COMPONENT.upper()}_obs{VERIF_TYPE.upper()}_VAR2.conf'
                     )
-                    job_cmd_list.append(
+                    job_cmd_list_iterative.append(
                         f'#python -c '
                         + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                         + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                        + f'njob=\\\"{njob}\\\", '
                         + 'verif_case=\\\"${VERIF_CASE}\\\", '
                         + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                         + 'vx_mask=\\\"${NEST}\\\", '
@@ -612,10 +637,11 @@ elif STEP == 'stats':
                             + f'-c {MET_PLUS_CONF}/'
                             + f'PointStat_fcst{COMPONENT.upper()}_obs{VERIF_TYPE.upper()}_VAR2.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -641,10 +667,11 @@ elif STEP == 'stats':
                             + f'-c {MET_PLUS_CONF}/'
                             + f'PointStat_fcst{COMPONENT.upper()}_obs{VERIF_TYPE.upper()}_VAR2.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -673,10 +700,11 @@ elif STEP == 'stats':
                         + f'-c {MET_PLUS_CONF}/'
                         + f'PointStat_fcst{COMPONENT.upper()}_obs{VERIF_TYPE.upper()}_VAR2.conf'
                     )
-                    job_cmd_list.append(
+                    job_cmd_list_iterative.append(
                         f'#python -c '
                         + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                         + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                        + f'njob=\\\"{njob}\\\", '
                         + 'verif_case=\\\"${VERIF_CASE}\\\", '
                         + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                         + 'vx_mask=\\\"${NEST}\\\", '
@@ -706,10 +734,11 @@ elif STEP == 'stats':
                         + f'-c {MET_PLUS_CONF}/'
                         + f'PointStat_fcst{COMPONENT.upper()}_obs{VERIF_TYPE.upper()}_VAR2.conf'
                     )
-                    job_cmd_list.append(
+                    job_cmd_list_iterative.append(
                         f'#python -c '
                         + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                         + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                        + f'njob=\\\"{njob}\\\", '
                         + 'verif_case=\\\"${VERIF_CASE}\\\", '
                         + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                         + 'vx_mask=\\\"${NEST}\\\", '
@@ -735,10 +764,11 @@ elif STEP == 'stats':
                             + f'-c {MET_PLUS_CONF}/'
                             + f'PointStat_fcst{COMPONENT.upper()}_obs{VERIF_TYPE.upper()}_VAR2.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -764,10 +794,11 @@ elif STEP == 'stats':
                             + f'-c {MET_PLUS_CONF}/'
                             + f'PointStat_fcst{COMPONENT.upper()}_obs{VERIF_TYPE.upper()}_VAR2.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -799,10 +830,11 @@ elif STEP == 'stats':
                             + f'-c {MET_PLUS_CONF}/'
                             + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -813,7 +845,6 @@ elif STEP == 'stats':
                             + 'fhr_end=\\\"${FHR_END}\\\", '
                             + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                             + 'model=\\\"${MODELNAME}\\\", '
-                            + f'njob=\\\"{njob}\\\"'
                             + ')\"'
                         )
                         job_cmd_list_iterative.append(
@@ -825,6 +856,7 @@ elif STEP == 'stats':
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -835,7 +867,6 @@ elif STEP == 'stats':
                             + 'fhr_end=\\\"${FHR_END}\\\", '
                             + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                             + 'model=\\\"${MODELNAME}\\\", '
-                            + f'njob=\\\"{njob}\\\"'
                             + ')\"'
                         )
                         job_cmd_list_iterative.append(
@@ -845,10 +876,11 @@ elif STEP == 'stats':
                             + f'obs{VERIF_TYPE.upper()}_'
                             + f'{str(NEST).upper()}_{VAR_NAME}.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -874,10 +906,11 @@ elif STEP == 'stats':
                                 + f'-c {MET_PLUS_CONF}/'
                                 + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -888,7 +921,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -900,6 +932,7 @@ elif STEP == 'stats':
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -910,7 +943,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -920,10 +952,11 @@ elif STEP == 'stats':
                                 + f'obs{VERIF_TYPE.upper()}_'
                                 + f'{str(NEST).upper()}_{VAR_NAME}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -949,10 +982,11 @@ elif STEP == 'stats':
                                 + f'-c {MET_PLUS_CONF}/'
                                 + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -963,7 +997,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -975,6 +1008,7 @@ elif STEP == 'stats':
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -985,7 +1019,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -995,10 +1028,11 @@ elif STEP == 'stats':
                                 + f'obs{VERIF_TYPE.upper()}_'
                                 + f'{str(NEST).upper()}_{VAR_NAME}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1029,10 +1063,11 @@ elif STEP == 'stats':
                             + f'PointStat_fcst{COMPONENT.upper()}_'
                             + f'obs{VERIF_TYPE.upper()}_{str(NEST).upper()}.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1059,10 +1094,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}_{str(NEST).upper()}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1089,10 +1125,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}_{str(NEST).upper()}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1127,10 +1164,11 @@ elif STEP == 'stats':
                             + f'-c {MET_PLUS_CONF}/'
                             + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1141,7 +1179,6 @@ elif STEP == 'stats':
                             + 'fhr_end=\\\"${FHR_END}\\\", '
                             + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                             + 'model=\\\"${MODELNAME}\\\", '
-                            + f'njob=\\\"{njob}\\\"'
                             + ')\"'
                         )
                         job_cmd_list_iterative.append(
@@ -1153,6 +1190,7 @@ elif STEP == 'stats':
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1163,7 +1201,6 @@ elif STEP == 'stats':
                             + 'fhr_end=\\\"${FHR_END}\\\", '
                             + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                             + 'model=\\\"${MODELNAME}\\\", '
-                            + f'njob=\\\"{njob}\\\"'
                             + ')\"'
                         )
                         job_cmd_list_iterative.append(
@@ -1172,10 +1209,11 @@ elif STEP == 'stats':
                             + f'PointStat_fcst{COMPONENT.upper()}_'
                             + f'obs{VERIF_TYPE.upper()}_{VAR_NAME}.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1201,10 +1239,11 @@ elif STEP == 'stats':
                                 + f'-c {MET_PLUS_CONF}/'
                                 + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1215,7 +1254,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -1227,6 +1265,7 @@ elif STEP == 'stats':
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1237,7 +1276,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -1246,10 +1284,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}_{VAR_NAME}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1275,10 +1314,11 @@ elif STEP == 'stats':
                                 + f'-c {MET_PLUS_CONF}/'
                                 + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1289,7 +1329,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -1301,6 +1340,7 @@ elif STEP == 'stats':
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1311,7 +1351,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -1320,10 +1359,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}_{VAR_NAME}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1352,10 +1392,11 @@ elif STEP == 'stats':
                             + f'-c {MET_PLUS_CONF}/'
                             + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1366,7 +1407,6 @@ elif STEP == 'stats':
                             + 'fhr_end=\\\"${FHR_END}\\\", '
                             + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                             + 'model=\\\"${MODELNAME}\\\", '
-                            + f'njob=\\\"{njob}\\\"'
                             + ')\"'
                         )
                         job_cmd_list_iterative.append(
@@ -1378,6 +1418,7 @@ elif STEP == 'stats':
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1388,7 +1429,6 @@ elif STEP == 'stats':
                             + 'fhr_end=\\\"${FHR_END}\\\", '
                             + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                             + 'model=\\\"${MODELNAME}\\\", '
-                            + f'njob=\\\"{njob}\\\"'
                             + ')\"'
                         )
                         job_cmd_list_iterative.append(
@@ -1397,10 +1437,11 @@ elif STEP == 'stats':
                             + f'PointStat_fcst{COMPONENT.upper()}_'
                             + f'obs{VERIF_TYPE.upper()}_{VAR_NAME}.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1431,10 +1472,11 @@ elif STEP == 'stats':
                             + f'PointStat_fcst{COMPONENT.upper()}_'
                             + f'obs{VERIF_TYPE.upper()}.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1461,10 +1503,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1491,10 +1534,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1524,10 +1568,11 @@ elif STEP == 'stats':
                             + f'PointStat_fcst{COMPONENT.upper()}_'
                             + f'obs{VERIF_TYPE.upper()}.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1558,10 +1603,11 @@ elif STEP == 'stats':
                             + f'-c {MET_PLUS_CONF}/'
                             + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1572,7 +1618,6 @@ elif STEP == 'stats':
                             + 'fhr_end=\\\"${FHR_END}\\\", '
                             + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                             + 'model=\\\"${MODELNAME}\\\", '
-                            + f'njob=\\\"{njob}\\\"'
                             + ')\"'
                         )
                         job_cmd_list_iterative.append(
@@ -1584,6 +1629,7 @@ elif STEP == 'stats':
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1594,7 +1640,6 @@ elif STEP == 'stats':
                             + 'fhr_end=\\\"${FHR_END}\\\", '
                             + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                             + 'model=\\\"${MODELNAME}\\\", '
-                            + f'njob=\\\"{njob}\\\"'
                             + ')\"'
                         )
                         job_cmd_list_iterative.append(
@@ -1603,10 +1648,11 @@ elif STEP == 'stats':
                             + f'PointStat_fcst{COMPONENT.upper()}_'
                             + f'obs{VERIF_TYPE.upper()}_{VAR_NAME}.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1632,10 +1678,11 @@ elif STEP == 'stats':
                                 + f'-c {MET_PLUS_CONF}/'
                                 + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1646,7 +1693,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -1658,6 +1704,7 @@ elif STEP == 'stats':
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1668,7 +1715,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -1677,10 +1723,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}_{VAR_NAME}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1706,10 +1753,11 @@ elif STEP == 'stats':
                                 + f'-c {MET_PLUS_CONF}/'
                                 + f'RegridDataPlane_fcst{COMPONENT.upper()}_PTYPE.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1720,7 +1768,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -1732,6 +1779,7 @@ elif STEP == 'stats':
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1742,7 +1790,6 @@ elif STEP == 'stats':
                                 + 'fhr_end=\\\"${FHR_END}\\\", '
                                 + 'fhr_incr=\\\"${FHR_INCR}\\\", '
                                 + 'model=\\\"${MODELNAME}\\\", '
-                                + f'njob=\\\"{njob}\\\"'
                                 + ')\"'
                             )
                             job_cmd_list_iterative.append(
@@ -1751,10 +1798,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}_{VAR_NAME}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1785,10 +1833,11 @@ elif STEP == 'stats':
                             + f'PointStat_fcst{COMPONENT.upper()}_'
                             + f'obs{VERIF_TYPE.upper()}.conf'
                         )
-                        job_cmd_list.append(
+                        job_cmd_list_iterative.append(
                             f'#python -c '
                             + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                             + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                            + f'njob=\\\"{njob}\\\", '
                             + 'verif_case=\\\"${VERIF_CASE}\\\", '
                             + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                             + 'vx_mask=\\\"${NEST}\\\", '
@@ -1815,10 +1864,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'#python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1845,10 +1895,11 @@ elif STEP == 'stats':
                                 + f'PointStat_fcst{COMPONENT.upper()}_'
                                 + f'obs{VERIF_TYPE.upper()}.conf'
                             )
-                            job_cmd_list.append(
+                            job_cmd_list_iterative.append(
                                 f'python -c '
                                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                                + f'njob=\\\"{njob}\\\", '
                                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                                 + 'vx_mask=\\\"${NEST}\\\", '
@@ -1883,6 +1934,7 @@ elif STEP == 'stats':
                 f'#python -c '
                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                + f'njob=\\\"{njob}\\\", '
                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                 + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                 + 'met_tool=\\\"stat_analysis\\\", '
@@ -1895,7 +1947,9 @@ elif STEP == 'stats':
                 + ')\"'
             )
         else:
-            if glob.glob(os.path.join(MET_PLUS_OUT,VERIF_TYPE,'point_stat',f'{MODELNAME}.{VDATE}','*stat')):
+            if glob.glob(os.path.join(
+                    DATA,VERIF_CASE,'METplus_output',VERIF_TYPE,'point_stat',
+                    f'{MODELNAME}.{VDATE}','*stat')):
                 job_cmd_list.append(
                     f'{metplus_launcher} -c {machine_conf} '
                     + f'-c {MET_PLUS_CONF}/'
@@ -1906,6 +1960,7 @@ elif STEP == 'stats':
                     f'python -c '
                     + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                     + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                    + f'njob=\\\"{njob}\\\", '
                     + 'verif_case=\\\"${VERIF_CASE}\\\", '
                     + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                     + 'met_tool=\\\"stat_analysis\\\", '
@@ -1938,6 +1993,7 @@ elif STEP == 'stats':
                     f'#python -c '
                     + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                     + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                    + f'njob=\\\"{njob}\\\", '
                     + 'verif_case=\\\"${VERIF_CASE}\\\", '
                     + 'verif_type=\\\"${VERIF_TYPE}\\\", '
                     + 'met_tool=\\\"stat_analysis\\\", '
@@ -1970,6 +2026,7 @@ elif STEP == 'stats':
                 f'#python -c '
                 + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                 + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                + f'njob=\\\"{njob}\\\", '
                 + 'verif_case=\\\"${VERIF_CASE}\\\", '
                 + 'met_tool=\\\"stat_analysis\\\", '
                 + 'vdate=\\\"${VDATE}\\\", '
@@ -1982,7 +2039,9 @@ elif STEP == 'stats':
                 + ')\"'
             )
         else:
-            if glob.glob(os.path.join(MET_PLUS_OUT,'gather_small','stat_analysis',f'{MODELNAME}.{VDATE}','*stat')):
+            if glob.glob(os.path.join(
+                    DATA,VERIF_CASE,'METplus_output','gather_small',
+                    'stat_analysis',f'{MODELNAME}.{VDATE}','*stat')):
                 job_cmd_list.append(
                     f'{metplus_launcher} -c {machine_conf} '
                     + f'-c {MET_PLUS_CONF}/'
@@ -1993,6 +2052,7 @@ elif STEP == 'stats':
                     f'python -c '
                     + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                     + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                    + f'njob=\\\"{njob}\\\", '
                     + 'verif_case=\\\"${VERIF_CASE}\\\", '
                     + 'met_tool=\\\"stat_analysis\\\", '
                     + 'vdate=\\\"${VDATE}\\\", '
@@ -2025,6 +2085,7 @@ elif STEP == 'stats':
                     f'#python -c '
                     + '\"import cam_util as cutil; cutil.copy_data_to_restart('
                     + '\\\"${DATA}\\\", \\\"${RESTART_DIR}\\\", '
+                    + f'njob=\\\"{njob}\\\", '
                     + 'verif_case=\\\"${VERIF_CASE}\\\", '
                     + 'met_tool=\\\"stat_analysis\\\", '
                     + 'vdate=\\\"${VDATE}\\\", '
@@ -2043,7 +2104,7 @@ elif STEP == 'stats':
                     + f"\"job{njob}\", job_type=\"{job_type}\")'"
                 )
     elif job_type == 'gather3':
-        if glob.glob(os.path.join(COMOUTsmall,'*stat')):
+        if glob.glob(os.path.join(COMOUTsmall,'gather_small','*stat')):
             job_cmd_list.append(
                 f'{metplus_launcher} -c {machine_conf} '
                 + f'-c {MET_PLUS_CONF}/'
