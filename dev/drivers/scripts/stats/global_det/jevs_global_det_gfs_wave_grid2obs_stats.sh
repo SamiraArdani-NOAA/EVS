@@ -4,7 +4,7 @@
 #PBS -q dev
 #PBS -A VERF-DEV
 #PBS -l walltime=00:20:00
-#PBS -l place=vscatter,select=1:ncpus=25:mem=25GB
+#PBS -l place=vscatter,select=1:ncpus=25:mem=50GB
 #PBS -l debug=true
 
 set -x 
@@ -35,7 +35,7 @@ export nproc=25
 
 export OMP_NUM_THREADS=1
 
-export MAILTO='alicia.bentley@noaa.gov,mallory.row@noaa.gov'
+export MAILTO='alicia.bentley@noaa.gov,qi.shi@noaa.gov'
 
 export envir=prod
 export NET=evs
