@@ -51,6 +51,7 @@ lead_hours='0 12 24 36 48 60 72
             84 96 108 120 132 144 156
             168 180 192 204 216 228 240'
 models='nfcens gefs fnmoc'
+MODNAMES='NFCENS GEFS FNMOC'
 export GRID2OBS_CONF="${PARMevs}/metplus_config/${STEP}/${COMPONENT}/${RUN}_${VERIF_CASE}"
 export MODELNAME="nfcens"
 export OBSNAME="GDAS"
@@ -76,16 +77,16 @@ for vhr in ${vhours} ; do
         flead=$(printf "%03d" "${fhr}")
         flead2=$(printf "%02d" "${fhr}")
 
-	export MODELNAME="nfcens"
-	export OBSNAME="GDAS"
         EVSINgdasncfilename=${EVSINgdasnc}/${RUN}.${VDATE}/${MODELNAME}/${VERIF_CASE}/gdas.SFCSHP.${VDATE}${vhr2}.nc 
         DATAgdasncfilename=${DATA}/SFCSHP/gdas.SFCSHP.${VDATE}${vhr2}.nc
         
 	for model in $models; do
 		if [ ${model} = nfcens ]; then
+			export MODNAM="NFCENS"
+			export modelname="nfcens"
 			EVSINmodelfilename=$COMIN/prep/$COMPONENT/${RUN}.${match_date}/${MODELNAME}/${VERIF_CASE}/HTSGW_mean.${match_date}.t${match_fhr}z.f${flead}.grib2
         		DATAmodelfilename=$DATA/gribs/HTSGW_mean.${match_date}.t${match_fhr}z.f${flead}.grib2
-			job_work_dir=$DATA/job_work_dir/PointStat_${MODNAM}_obs${OBSNAME}_valid${VDATE}${valid_hour2}_f${flead}
+			job_work_dir=$DATA/job_work_dir/PointStat_${MODNAM}_obs${OBSNAME}_valid${VDATE}${vhr2}_f${flead}
 			job_stat_file=$job_work_dir/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
 			DATAstatfilename=$DATA/all_stats/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
 			COMOUTstatfilename=$COMOUTsmall/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
@@ -94,7 +95,7 @@ for vhr in ${vhours} ; do
 			export modelname="gefs"
 			EVSINmodelfilename=$COMIN/prep/$COMPONENT/${RUN}.${match_date}/${MODELNAME}/${VERIF_CASE}/${MODEL1NAME}.${RUN}.${match_date}.t${match_fhr}z.mean.global.0p25.f${flead}.grib2
 			DATAmodelfilename=$DATA/gribs/${modelname}.${RUN}.${match_date}.t${match_fhr}z.mean.global.0p25.f${flead}.grib2
-			job_work_dir=$DATA/job_work_dir/PointStat_${MODNAM}_obs${OBSNAME}_valid${VDATE}${valid_hour2}_f${flead}
+			job_work_dir=$DATA/job_work_dir/PointStat_${MODNAM}_obs${OBSNAME}_valid${VDATE}${vhr2}_f${flead}
 			job_stat_file=$job_work_dir/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
 			DATAstatfilename=$DATA/all_stats/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
 			COMOUTstatfilename=$COMOUTsmall/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
@@ -103,7 +104,7 @@ for vhr in ${vhours} ; do
 			export modelname="fnmoc"
 			EVSINfilename=$COMIN/prep/$COMPONENT/${RUN}.${match_date}/${MODELNAME}/${VERIF_CASE}/wave_${match_date}${match_fhr}.f${flead}.grib2
 			DATAmodelfilename=$DATA/gribs/wave_${match_date}${match_fhr}.f${flead}.grib2
-			job_work_dir=$DATA/job_work_dir/PointStat_${MODNAM}_obs${OBSNAME}_valid${VDATE}${valid_hour2}_f${flead}
+			job_work_dir=$DATA/job_work_dir/PointStat_${MODNAM}_obs${OBSNAME}_valid${VDATE}${vhr2}_f${flead}
 			job_stat_file=$job_work_dir/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
 			DATAstatfilename=$DATA/all_stats/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
 			COMOUTstatfilename=$COMOUTsmall/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
@@ -176,9 +177,9 @@ for vhr in ${vhours} ; do
 	for fhr in ${lead_hours} ; do
 		flead=$(printf "%03d" "${fhr}")
 		flead2=$(printf "%02d" "${fhr}")
-		for model in ${models}; do 
-			job_stat_file=$job_work_dir/PointStat_obs${OBSNAME}_valid${VDATE}${vhr2}_f${flead}/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
-			all_stats_stat_file=$DATA/all_stats/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
+		for MODNAME in ${MODNAMES}; do 
+			job_stat_file=$DATA/job_work_dir/PointStat_${MODNAME}_obs${OBSNAME}_valid${VDATE}${vhr2}_f${flead}/point_stat_fcst${MODNAME}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
+			all_stats_stat_file=$DATA/all_stats/point_stat_fcst${MODNAME}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
 			if [ -s $job_stat_file ]; then
 	 			cp -v $job_stat_file $all_stats_stat_file
 			fi
@@ -195,8 +196,10 @@ if [ $gather = yes ] ; then
   nc=$(ls ${DATA}/all_stats/*stat | wc -l | awk '{print $1}')
   if [ "${nc}" != '0' ]; then
       echo " Found ${nc} ${DATA}/all_stats/*stat files for ${VDATE}"
-      mkdir -p ${DATA}/stats
+      
+      mkdir -p $DATA/job_work_dir/StatAnalysis_${VDATE}
       # Use StatAnalysis to gather the small stat files into one file
+      export job_work_dir=$DATA/job_work_dir/StatAnalysis_${VDATE}
       run_metplus.py ${PARMevs}/metplus_config/machine.conf ${GRID2OBS_CONF}/StatAnalysis_fcstNFCENS_obsGDAS.conf
       export err=$?; err_chk
 
@@ -210,12 +213,12 @@ if [ $gather = yes ] ; then
 		      if [ -s ${job_work_dir}/evs.stats.${model}.${RUN}.${VERIF_CASE}.v${VDATE}.stat ]; then
 			      cp -v ${job_work_dir}/evs.stats.${model}.${RUN}.${VERIF_CASE}.v${VDATE}.stat ${COMOUTfinal}/.
 		      else
-			      echo "WARNING: DOES NOT EXIST ${job_work_dir}/evs.stats.${model}.${RUN}.${VERIF_CASE}.v${VDATE}.stat"
+			      echo "NOTE: DOES NOT EXIST ${job_work_dir}/evs.stats.${model}.${RUN}.${VERIF_CASE}.v${VDATE}.stat"
 		      fi
 	      fi
       done
   else
-      echo "WARNING: NO SMALL STAT FILES FOUND IN ${DATA}/all_stats"
+      echo "NOTE: NO SMALL STAT FILES FOUND IN ${DATA}/all_stats"
   fi
 fi
 
