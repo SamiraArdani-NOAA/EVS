@@ -93,7 +93,7 @@ for vhr in ${vhours} ; do
 		elif [ ${model} = gefs ]; then
 			export MODNAM="GEFS"
 			export modelname="gefs"
-			EVSINmodelfilename=$COMIN/prep/$COMPONENT/${RUN}.${match_date}/${MODELNAME}/${VERIF_CASE}/${MODEL1NAME}.${RUN}.${match_date}.t${match_fhr}z.mean.global.0p25.f${flead}.grib2
+			EVSINmodelfilename=$COMIN/prep/$COMPONENT/${RUN}.${match_date}/${MODELNAME}/${VERIF_CASE}/${modelname}.${RUN}.${match_date}.t${match_fhr}z.mean.global.0p25.f${flead}.grib2
 			DATAmodelfilename=$DATA/gribs/${modelname}.${RUN}.${match_date}.t${match_fhr}z.mean.global.0p25.f${flead}.grib2
 			job_work_dir=$DATA/job_work_dir/PointStat_${MODNAM}_obs${OBSNAME}_valid${VDATE}${vhr2}_f${flead}
 			job_stat_file=$job_work_dir/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
