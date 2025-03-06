@@ -1,13 +1,16 @@
 #!/bin/bash
 ################################################################################
 # Name of Script: exevs_nfcens_wave_grid2obs_stats.sh                           
-# Deanna Spindler / Deanna.Spindler@noaa.gov                                    
-# Mallory Row / Mallory.Row@noaa.gov
-# Samira Ardani / samira.ardani@noaa.gov
+# Citation:   Deanna Spindler / Deanna.Spindler@noaa.gov                                    
+#             Mallory Row / Mallory.Row@noaa.gov
+# 
+# Developer: Samira Ardani / samira.ardani@noaa.gov
 #
 # Purpose of Script: Run the grid2obs stats for any global wave model           
 #                    (deterministic and ensemble: GEFS-Wave, GFS-Wave, NWPS)    
-# 		    EVSv2: FNMOC anf GEFS were added to plot against NFCENS.	                                                                              
+# 		     EVSv2 added features: 
+# 		     1- FNMOC anf GEFS were added to plot against NFCENS (07/2024).
+# 		     2- Added MPMD directories and updated the $DATA structure. (03/2025)                                                                           
 # Usage:                                                                        
 #  Parameters: None                                                             
 #  Input files:                                                                 
