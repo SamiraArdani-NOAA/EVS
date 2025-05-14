@@ -230,9 +230,9 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
     df_groups = df.groupby(group_by)
     # Aggregate unit statistics before calculating metrics
     if str(line_type).upper() == 'CTC':
-        df_aggregated = df_groups.sum()
+        df_aggregated = df_groups.sum(numeric_only=True)
     else:
-        df_aggregated = df_groups.mean()
+        df_aggregated = df_groups.mean(numeric_only=True)
     if sample_equalization:
         df_aggregated['COUNTS']=df_groups.size()
     if keep_shared_events_only:
@@ -430,13 +430,9 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
                 models_sharing_colors = models_renamed[
                     np.array(temp_colors)==c
                 ]
-                if np.flatnonzero(np.core.defchararray.find(
-                        models_sharing_colors, 'model')!=-1):
-                    need_to_rename = models_sharing_colors[np.flatnonzero(
-                        np.core.defchararray.find(
-                            models_sharing_colors, 'model'
-                        )!=-1)[0]
-                    ]
+                arr= np.atleast_1d(models_sharing_colors).astype(str)
+                if np.any(np.char.find(arr, 'model') != -1):
+                    need_to_rename = arr[np.char.find(arr,'model') != -1]
                 else:
                     continue
                 models_renamed[models_renamed==need_to_rename] = (
