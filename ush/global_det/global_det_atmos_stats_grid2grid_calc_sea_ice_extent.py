@@ -60,6 +60,7 @@ DATA = os.environ['DATA']
 VERIF_CASE = os.environ['VERIF_CASE']
 STEP = os.environ['STEP']
 RUN = os.environ['RUN']
+os.environ['MET_PYTHON_EXE'] = "/apps/prod/ve/intel/19.1.3.304/python/3.10.4/evs/2.0/bin/python"
 
 # Set date info
 DATE_start_dt = datetime.datetime.strptime(DATE+valid_hr_start, '%Y%m%d%H')
