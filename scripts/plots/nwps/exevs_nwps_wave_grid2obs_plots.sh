@@ -39,9 +39,9 @@ mkdir -p ${DATA}/job_work_dir
 mkdir -p ${DATA}/images
 
 
-export models='nwpsv1p4 nwpsv1p5'
-export MODNAMS='NWPSV1P$ NWPSV1P5'
-export MODELS='NWPSV1P$ NWPSV1P5'
+export models='nwpsv1p4, nwpsv1p5'
+export MODNAMS='NWPSV1P4, NWPSV1P5'
+export MODELS='NWPSV1P4, NWPSV1P5'
 
 
 echo "Starting grid2obs_plots for ${MODELNAME}_${RUN}"
@@ -66,7 +66,9 @@ echo 'Copying *.stat files :'
 echo '-----------------------------'
 [[ "$LOUD" = YES ]] && set -x
 
-WFO='ajk alu akq box car chs gys olm lwx mhx okx phi gum hfo bro crp hgx jax key lch lix mfl mlb mob sju tae tbw eka lox mfr mtr pqr sew sgx'
+#WFO='ajk alu akq box car chs gys olm lwx mhx okx phi gum hfo bro crp hgx jax key lch lix mfl mlb mob sju tae tbw eka lox mfr mtr pqr sew sgx'
+
+WFO='bro'
 
 for wfo in ${WFO}; do
 	export wfo=$wfo
@@ -75,12 +77,13 @@ for wfo in ${WFO}; do
 
 	theDate=${plot_start_date}
 	while (( ${theDate} <= ${plot_end_date} )); do
-  		EVSINnwps=${COMIN}/stats/${COMPONENT}/${MODEL}.${theDate}
+  		EVSINnwps=${COMIN}/stats/${COMPONENT}/${MODELNAME}.${theDate}
+		cp -r ${COMIN}/stats/${COMPONENT}/nwpsv1p4.${theDate}/* ${COMIN}/stats/${COMPONENT}/nwpsv1p5.${theDate}/* ${EVSINnwps}
 		for model in ${models}; do
-    			if [ -s ${EVSINnwps}/evs.stats.${MODEL}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
-				cp ${EVSINnwps}/evs.stats.${MODEL}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ${DATA}/stats/.
+    			if [ -s ${EVSINnwps}/evs.stats.${model}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
+				cp ${EVSINnwps}/evs.stats.${model}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ${DATA}/stats/.
     			else
-	    			echo "WARNING: ${EVSINnwps}/evs.stats.${MODEL}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat DOES NOT EXIST"
+	    			echo "WARNING: ${EVSINnwps}/evs.stats.${model}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat DOES NOT EXIST"
     			fi
 		done
 
@@ -116,7 +119,7 @@ for wfo in ${WFO}; do
 		echo "             for ${wfo} at ${VDATE} "
 		echo '**************************************** '
 		echo ' '
-		echo "${MODEL}_${RUN} $VDATE $vhour : NWPS *.stat files missing."
+		echo "${MODELNAME}_${RUN} $VDATE $vhour : NWPS *.stat files missing."
 		[[ "$LOUD" = YES ]] && set -x
 		continue # This will skip the rest of the loop for this WFO
 	fi
@@ -135,9 +138,9 @@ for wfo in ${WFO}; do
 # Run the command files for the PAST31DAYS 
 ###########################################
 	cd ${DATA}
-	chmod 775 ${DATA}/plot_all_${MODEL}_${RUN}_g2o_${wfo}_plots.sh
+	chmod 775 ${DATA}/plot_all_${MODELNAME}_${RUN}_g2o_${wfo}_plots.sh
 	if [ ${run_mpi} = 'yes' ] ; then
-		mpiexec -np 36 --cpu-bind verbose,depth cfp plot_all_${MODEL}_${RUN}_g2o_${wfo}_plots.sh
+		mpiexec -np 36 --cpu-bind verbose,depth cfp plot_all_${MODELNAME}_${RUN}_g2o_${wfo}_plots.sh
 	else
 		echo "not running mpiexec"
 		sh plot_all_${MODELNAME}_${RUN}_g2o_${wfo}_plots.sh
