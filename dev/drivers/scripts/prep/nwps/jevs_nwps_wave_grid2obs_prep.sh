@@ -10,7 +10,7 @@
 
 set -x
 
-export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/EVS
+export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/EVS_NWPS/EVS
 
 export MODELNAME=nwps
 export NET=evs
@@ -45,8 +45,8 @@ export envir=prod
 export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
 export SENDDBN=${SENDDBN:-NO}
-export KEEPDATA=${KEEPDATA:-NO}
-export SENDMAIL=${SENDMAIL:-YES}
+export KEEPDATA=${KEEPDATA:-YES}
+export SENDMAIL=${SENDMAIL:-NO}
 
 export MAILTO='andrew.benjamin@noaa.gov,samira.ardani@noaa.gov'
 
