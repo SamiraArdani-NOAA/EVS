@@ -93,26 +93,6 @@ for wfo in ${WFO}; do
 ####################
 # quick error check 
 ####################
-<<<<<<< HEAD:scripts/plots/nwps/exevs_nwps_wave_grid2obs_plots.sh
-	nc1=`ls ${DATA}/stats/evs.stats.nwpsv1p4.${wfo}*stat | wc -l | awk '{print $1}'`
-	nc2=`ls ${DATA}/stats/evs.stats.nwpsv1p5.${wfo}*stat | wc -l | awk '{print $1}'`
-	echo " Found ${nc} ${DATA}/stats/evs.stats.nwpsv1p4.${wfo}*stat file for ${VDATE} "
-	if [ "${nc1}" != '0' ]
-		then
-		set -x
-		echo "Successfully copied the NWPSv1p4 *.stat file for ${VDATE}"
-		[[ "$LOUD" = YES ]] && set -x
-
-		if [ "${nc2}" != '0' ]
-			then
-			set -x
-			echo "Successfully copied the NWPSv1p5 *.stat file for ${VDATE}"
-			[[ "$LOUD" = YES ]] && set -x
-		else
-			echo "WARNING: Did not copy the NWPSV1P5 *.stat files for ${VDATE}"
-		fi
-
-=======
 	if [ -s ${DATA}/stats/evs.stats.nwps.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
 		
 		nc=`ls ${DATA}/stats/evs.stats.nwps.${wfo}*stat | wc -l | awk '{print $1}'`
@@ -134,7 +114,6 @@ for wfo in ${WFO}; do
 			[[ "$LOUD" = YES ]] && set -x
 			continue # This will skip the rest of the loop for this WFO
 		fi
->>>>>>> develop:scripts/plots/nwps/exevs_plots_nwps_wave_grid2obs.sh
 	else
 		echo "WARNING: ${DATA}/stats/evs.stats.nwps.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat DOES NOT EXIST"
 	fi

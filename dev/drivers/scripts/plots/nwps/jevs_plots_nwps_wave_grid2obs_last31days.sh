@@ -49,10 +49,7 @@ export DATAROOT=/lfs/h2/emc/stmp/${USER}/evs_test/$envir/tmp
 export OUTPUTROOT=/lfs/h2/emc/ptmp/$USER
 export COMIN=/lfs/h2/emc/vpppg/noscrub/${USER}/${NET}_devonly/${evs_ver_2d}
 export COMOUT=${OUTPUTROOT}/${NET}_devonly/${evs_ver_2d}
-<<<<<<< HEAD:dev/drivers/scripts/plots/nwps/jevs_nwps_wave_grid2obs_plots.sh
-=======
 export EVAL_PERIOD="last31days"
->>>>>>> develop:dev/drivers/scripts/plots/nwps/jevs_plots_nwps_wave_grid2obs_last31days.sh
 
 export run_mpi='yes'
 export gather='yes'
