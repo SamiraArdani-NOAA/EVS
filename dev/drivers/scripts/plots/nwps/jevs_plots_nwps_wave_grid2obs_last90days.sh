@@ -9,7 +9,7 @@
 
 set -x
 
-export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/EVS
+export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/EVS_NWPS/EVS
 
 export MODELNAME=nwps
 export OBTYPE=NDBC_STANDARD
