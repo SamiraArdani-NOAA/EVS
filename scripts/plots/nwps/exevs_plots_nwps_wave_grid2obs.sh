@@ -39,9 +39,9 @@ mkdir -p ${DATA}/job_work_dir
 mkdir -p ${DATA}/images
 
 
-export models='nwpsv1p4, nwpsv1p5'
-export MODNAMS='NWPSV1P4, NWPSV1P5'
-export MODELS='NWPSV1P4, NWPSV1P5'
+export models='nwpsv1p4 nwpsv1p5'
+export MODNAMS='NWPSV1P4 NWPSV1P5'
+export MODELS='NWPSV1P4 NWPSV1P5'
 
 
 echo "Starting grid2obs_plots for ${MODELNAME}_${RUN}"
@@ -66,19 +66,17 @@ echo 'Copying *.stat files :'
 echo '-----------------------------'
 [[ "$LOUD" = YES ]] && set -x
 
-WFO='ajk alu akq box car chs gys olm lwx mhx okx phi gum hfo bro crp hgx jax key lch lix mfl mlb mob sju tae tbw eka lox mfr mtr pqr sew sgx'
-
+#WFO='ajk alu akq box car chs gys olm lwx mhx okx phi gum hfo bro crp hgx jax key lch lix mfl mlb mob sju tae tbw eka lox mfr mtr pqr sew sgx'
+WFO='box'
 
 for wfo in ${WFO}; do
 	export wfo=$wfo
 	plot_start_date=${PDYm90}
 	plot_end_date=${VDATE}
-
 	theDate=${plot_start_date}
 	while (( ${theDate} <= ${plot_end_date} )); do
-  		EVSINnwps=${COMIN}/stats/${COMPONENT}/${MODELNAME}.${theDate}
-		cp -r ${COMIN}/stats/${COMPONENT}/nwpsv1p4.${theDate}/* ${COMIN}/stats/${COMPONENT}/nwpsv1p5.${theDate}/* ${EVSINnwps}
 		for model in ${models}; do
+  			EVSINnwps=${COMIN}/stats/${COMPONENT}/${model}.${theDate}
     			if [ -s ${EVSINnwps}/evs.stats.${model}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
 				cp ${EVSINnwps}/evs.stats.${model}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ${DATA}/stats/.
     			else
@@ -92,20 +90,21 @@ for wfo in ${WFO}; do
 ####################
 # quick error check 
 ####################
-	if [ -s ${DATA}/stats/evs.stats.nwps.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
+	for model in ${models}; do
+	if [ -s ${DATA}/stats/evs.stats.${model}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
 		
-		nc=`ls ${DATA}/stats/evs.stats.nwps.${wfo}*stat | wc -l | awk '{print $1}'`
-		echo " Found ${nc} ${DATA}/stats/evs.stats.nwps.${wfo}*stat file for ${VDATE} "
+		nc=`ls ${DATA}/stats/evs.stats.$model.${wfo}*stat | wc -l | awk '{print $1}'`
+		echo " Found ${nc} ${DATA}/stats/evs.stats.$model.${wfo}*stat file for ${VDATE} "
 		if [ "${nc}" != '0' ]
 			then
 			set -x
-			echo "Successfully copied the NWPS *.stat file for ${VDATE}"
+			echo "Successfully copied the $model *.stat file for ${VDATE}"
 			[[ "$LOUD" = YES ]] && set -x
 		else
 			set -x
 			echo ' '
 			echo '**************************************** '
-			echo '*** WARNING: NO NWPS *.stat FILES *** '
+			echo '*** WARNING: NO $model *.stat FILES *** '
 			echo "             for ${wfo} at ${VDATE} "
 			echo '**************************************** '
 			echo ' '
@@ -114,8 +113,9 @@ for wfo in ${WFO}; do
 			continue # This will skip the rest of the loop for this WFO
 		fi
 	else
-		echo "WARNING: ${DATA}/stats/evs.stats.nwps.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat DOES NOT EXIST"
+		echo "WARNING: ${DATA}/stats/evs.stats.$model.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat DOES NOT EXIST"
 	fi
+	done
 #################################
 ## Make the command files for cfp 
 #################################
