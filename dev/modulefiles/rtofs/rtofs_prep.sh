@@ -12,6 +12,9 @@ module load prod_util/${prod_util_ver}
 module load cdo/${cdo_ver}
 module load met/${met_ver}
 module load metplus/${metplus_ver}
+module use /apps/dev/lmodules/intel/${intel_ver}
+module load ve/evs/${ve_evs_ver}
+module use /apps/ops/para/libs/modulefiles/compiler/intel/${intel_ver}
 
 module list
 
