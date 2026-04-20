@@ -14,7 +14,15 @@ module load wgrib2/${wgrib2_ver}
 module load met/${met_ver}
 module load metplus/${metplus_ver}
 module load bufr/${bufr_ver}
-
+module load proj/7.1.0
+module load fckit/0.11.0
+module load atlas/0.35.0
+module load eckit/1.24.4
+module use /apps/dev/lmodules/intel/${intel_ver}
+module load ve/evs/${ve_evs_ver}
+module use /apps/ops/para/libs/modulefiles/compiler/intel/${intel_ver}
+module load met/${met_ver}
+module load metplus/${metplus_ver}
 module list
 
 set -x
