@@ -15,6 +15,7 @@ module load metplus/${metplus_ver}
 module use /apps/dev/lmodules/intel/${intel_ver}
 module load ve/evs/${ve_evs_ver}
 module use /apps/ops/para/libs/modulefiles/compiler/intel/${intel_ver}
+module load libjpeg-turbo/2.1.0
 
 module list
 
