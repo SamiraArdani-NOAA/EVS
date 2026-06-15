@@ -347,9 +347,9 @@ do
 	cp $COMOUTplots/$varb/evs.${anl}.ctc.${smvar}_${smlev}.last31days.perfdiag.buk_${smregion}.png $PLOTDIR
 	fi
 
-	if [ -e ${PLOTDIR}/ceil_vis/*/evs*png ]
+	if [ -e ${PLOTDIR}/ceil_vis/*/evs.${anl}.ctc.${smvar}_${smlev}.last31days.perfdiag.buk_${smregion}.png ]
 	then
-	mv ${PLOTDIR}/ceil_vis/*/evs*png ${PLOTDIR}/evs.${anl}.ctc.${smvar}_${smlev}.last31days.perfdiag.buk_${smregion}.png
+	mv ${PLOTDIR}/ceil_vis/*/evs.${anl}.ctc.${smvar}_${smlev}.last31days.perfdiag.buk_${smregion}.png ${PLOTDIR}/evs.${anl}.ctc.${smvar}_${smlev}.last31days.perfdiag.buk_${smregion}.png
 	if [ $SENDCOM = "YES" ]; then
 	if [ -e ${PLOTDIR}/evs.${anl}.ctc.${smvar}_${smlev}.last31days.perfdiag.buk_${smregion}.png ]; then
 	cp ${PLOTDIR}/evs.${anl}.ctc.${smvar}_${smlev}.last31days.perfdiag.buk_${smregion}.png $COMOUTplots/$varb
@@ -382,9 +382,9 @@ do
 	cp $COMOUTplots/$varb/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png $PLOTDIR
 	fi
 
-	if [ -e ${PLOTDIR}/ceil_vis/*/evs*png ]
+	if [ -e ${PLOTDIR}/ceil_vis/*/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png ]
 	then
-	mv ${PLOTDIR}/ceil_vis/*/evs*png ${PLOTDIR}/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png
+	mv ${PLOTDIR}/ceil_vis/*/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png ${PLOTDIR}/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png
 	if [ $SENDCOM = "YES" ]; then
 	if [ -e ${PLOTDIR}/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png ]; then
 	cp ${PLOTDIR}/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png $COMOUTplots/$varb
@@ -425,7 +425,7 @@ if [ $plot = yes ]; then
         cp $COMOUTplots/$var/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png $PLOTDIR
         fi
 
-	if [ -e ${PLOTDIR}/sfc_upper/*/evs*png ]
+	if [ -e ${PLOTDIR}/sfc_upper/*/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png ]
 	then
 	mv ${PLOTDIR}/sfc_upper/*/evs*png ${PLOTDIR}/evs.${anl}.${stat}.${smvar}_${smlev}.last31days.threshmean.buk_${smregion}.png
 	if [ $SENDCOM = "YES" ]; then
