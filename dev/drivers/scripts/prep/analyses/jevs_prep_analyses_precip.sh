@@ -17,8 +17,6 @@ export SENDCOM=YES
 export KEEPDATA=NO
 export SENDDBN=NO
 export SENDDBN_NTC=
-export job=${PBS_JOBNAME:-jevs_prep_analyses_precip}
-export jobid=$job.${PBS_JOBID:-$$}
 export SITE=$(cat /etc/cluster_name)
 export USE_CFP=YES
 export nproc=1
@@ -33,7 +31,6 @@ export MODELNAME="analyses"
 
 # EVS Settings
 export HOMEevs="/lfs/h2/emc/vpppg/noscrub/$USER/EVS"
-export HOMEevs=${HOMEevs:-${PACKAGEROOT}/evs.${evs_ver}}
 export config=$HOMEevs/parm/evs_config/analyses/config.evs.prod.${STEP}.${COMPONENT}.${RUN}.${VERIF_CASE}
 
 # Load Modules
@@ -46,8 +43,16 @@ evs_ver_2d=$(echo $evs_ver | cut -d'.' -f1-2)
 # Developer Settings
 export envir=prod
 export DATAROOT=/lfs/h2/emc/stmp/$USER/evs_test/$envir/tmp
+<<<<<<< HEAD
 export COMOUT=/lfs/h2/emc/vpppg/noscrub/$USER/${NET}_devonly/$evs_ver_2d/$STEP/$COMPONENT
 export vhr=${vhr:-${vhr}}
+=======
+export COMOUT=/lfs/h2/emc/vpppg/noscrub/$USER/$NET/$evs_ver_2d/$STEP/$COMPONENT
+export vhr=${vhr:-00}
+
+export job=${PBS_JOBNAME:-jevs_prep_analyses_precip}
+export jobid=$job.${PBS_JOBID:-$$}
+>>>>>>> develop
 
 # Job Settings and Run
 . ${HOMEevs}/jobs/JEVS_PREP_ANALYSES

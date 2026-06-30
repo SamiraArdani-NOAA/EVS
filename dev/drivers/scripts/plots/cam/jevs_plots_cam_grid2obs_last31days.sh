@@ -16,8 +16,12 @@ export machine=WCOSS2
 export SENDECF=YES
 export SENDCOM=YES
 export KEEPDATA=NO
+<<<<<<< HEAD
 export SENDDBN=YES
 export SENDDBN_NTC=
+=======
+export SENDDBN=NO
+>>>>>>> develop
 export job=${PBS_JOBNAME:-jevs_plots_cam_grid2obs_last31days}
 export jobid=$job.${PBS_JOBID:-$$}
 export SITE=$(cat /etc/cluster_name)
