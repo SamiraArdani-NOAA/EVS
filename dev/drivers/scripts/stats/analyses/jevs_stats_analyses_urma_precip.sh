@@ -43,16 +43,13 @@ export VERIF_CASE=precip
 
 source $HOMEevs/dev/modulefiles/$COMPONENT/${COMPONENT}_${STEP}.sh
 
-<<<<<<< HEAD
 export job=${PBS_JOBNAME:-jevs_${STEP}_${MODELNAME}_${VERIF_CASE}}
 export jobid=$job.${PBS_JOBID:-$$}
 
 export COMIN=/lfs/h2/emc/vpppg/noscrub/$USER/${NET}_devonly/${evs_ver_2d}
 export COMOUT=/lfs/h2/emc/vpppg/noscrub/$USER/${NET}_devonly/${evs_ver_2d}
-=======
 export COMIN=/lfs/h2/emc/vpppg/noscrub/$USER/${NET}/${evs_ver_2d}
 export COMOUT=/lfs/h2/emc/vpppg/noscrub/$USER/${NET}/${evs_ver_2d}
->>>>>>> develop
 
 export vhr=${vhr:-00}
 echo $vhr

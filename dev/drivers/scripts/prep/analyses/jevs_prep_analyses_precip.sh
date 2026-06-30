@@ -43,16 +43,13 @@ evs_ver_2d=$(echo $evs_ver | cut -d'.' -f1-2)
 # Developer Settings
 export envir=prod
 export DATAROOT=/lfs/h2/emc/stmp/$USER/evs_test/$envir/tmp
-<<<<<<< HEAD
 export COMOUT=/lfs/h2/emc/vpppg/noscrub/$USER/${NET}_devonly/$evs_ver_2d/$STEP/$COMPONENT
 export vhr=${vhr:-${vhr}}
-=======
 export COMOUT=/lfs/h2/emc/vpppg/noscrub/$USER/$NET/$evs_ver_2d/$STEP/$COMPONENT
 export vhr=${vhr:-00}
 
 export job=${PBS_JOBNAME:-jevs_prep_analyses_precip}
 export jobid=$job.${PBS_JOBID:-$$}
->>>>>>> develop
 
 # Job Settings and Run
 . ${HOMEevs}/jobs/JEVS_PREP_ANALYSES

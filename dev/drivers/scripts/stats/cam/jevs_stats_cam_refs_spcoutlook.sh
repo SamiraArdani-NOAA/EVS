@@ -2,13 +2,10 @@
 #PBS -j oe
 #PBS -q dev
 #PBS -S /bin/bash
-<<<<<<< HEAD:dev/drivers/scripts/stats/cam/jevs_stats_cam_href_spcoutlook.sh
 #PBS -A EVS-DEV
 #PBS -l walltime=00:30:00
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=00:35:00
->>>>>>> develop:dev/drivers/scripts/stats/cam/jevs_stats_cam_refs_spcoutlook.sh
 #PBS -l place=vscatter,select=1:ncpus=2:mem=10GB
 #PBS -l debug=true
 

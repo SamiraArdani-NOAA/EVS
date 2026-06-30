@@ -3,15 +3,12 @@
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
-<<<<<<< HEAD
 #PBS -A EVS-DEV
 #PBS -l walltime=01:20:00
 #PBS -l place=vscatter:exclhost,select=8:ncpus=128:mem=100GB
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=02:40:00
 #PBS -l place=vscatter:exclhost,select=8:ncpus=128:mem=150GB
->>>>>>> develop
 #PBS -l debug=true
 
 set -x

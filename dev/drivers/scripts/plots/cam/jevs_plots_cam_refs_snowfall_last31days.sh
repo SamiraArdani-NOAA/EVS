@@ -2,13 +2,10 @@
 #PBS -j oe
 #PBS -q dev
 #PBS -S /bin/bash
-<<<<<<< HEAD:dev/drivers/scripts/plots/cam/jevs_plots_cam_href_snowfall_last90days.sh
 #PBS -A EVS-DEV
 #PBS -l walltime=00:15:00
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=00:10:00
->>>>>>> develop:dev/drivers/scripts/plots/cam/jevs_plots_cam_refs_snowfall_last31days.sh
 #PBS -l place=vscatter,select=1:ncpus=30:mem=20GB
 #PBS -l debug=true
 

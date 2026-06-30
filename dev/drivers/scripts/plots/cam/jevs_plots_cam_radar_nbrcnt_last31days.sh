@@ -2,15 +2,12 @@
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
-<<<<<<< HEAD:dev/drivers/scripts/stats/cam/jevs_stats_cam_hireswarwmem2_radar.sh
 #PBS -A EVS-DEV
 #PBS -l walltime=00:10:00
 #PBS -l place=vscatter:exclhost,select=1:ncpus=3:mem=50GB
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=0:15:00
 #PBS -l select=1:ncpus=64:ompthreads=1:mem=50GB
->>>>>>> develop:dev/drivers/scripts/plots/cam/jevs_plots_cam_radar_nbrcnt_last31days.sh
 #PBS -l debug=true
 
 

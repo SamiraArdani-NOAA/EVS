@@ -55,7 +55,6 @@ echo $vhr
 export job=${PBS_JOBNAME:-jevs_${STEP}_${MODELNAME}_${VERIF_CASE}_last31days}
 export jobid=$job.${PBS_JOBID:-$$}
 
-<<<<<<< HEAD
 export COMIN=/lfs/h2/emc/vpppg/noscrub/${USER}/${NET}/${evs_ver_2d}
 export COMOUT=/lfs/h2/emc/ptmp/$USER/${NET}/${evs_ver_2d}
 
@@ -63,9 +62,7 @@ export vhr=00
 echo $vhr
 
 export MAILTO="alicia.bentley@noaa.gov,andrew.benjamin@noaa.gov"
-=======
 export MAILTO=${MAILTO:-'mallory.row@noaa.gov,samira.ardani@noaa.gov'}
->>>>>>> develop
 
 # CALL executable job script here
 $HOMEevs/jobs/JEVS_PLOTS_ANALYSES

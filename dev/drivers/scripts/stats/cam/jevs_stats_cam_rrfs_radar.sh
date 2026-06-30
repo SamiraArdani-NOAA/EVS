@@ -2,15 +2,12 @@
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
-<<<<<<< HEAD:dev/drivers/scripts/stats/cam/jevs_stats_cam_hireswarw_radar.sh
 #PBS -A EVS-DEV
 #PBS -l walltime=00:10:00
 #PBS -l place=vscatter:exclhost,select=1:ncpus=3:mem=50GB
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=00:25:00
 #PBS -l place=vscatter:exclhost,select=1:ncpus=3:mem=75GB
->>>>>>> develop:dev/drivers/scripts/stats/cam/jevs_stats_cam_rrfs_radar.sh
 #PBS -l debug=true
 
 

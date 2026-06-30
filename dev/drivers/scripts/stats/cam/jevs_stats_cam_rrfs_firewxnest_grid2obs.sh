@@ -2,13 +2,10 @@
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q "dev"
-<<<<<<< HEAD:dev/drivers/scripts/stats/cam/jevs_stats_cam_nam_firewxnest_grid2obs.sh
 #PBS -A EVS-DEV
 #PBS -l walltime=00:15:00
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=00:25:00
->>>>>>> develop:dev/drivers/scripts/stats/cam/jevs_stats_cam_rrfs_firewxnest_grid2obs.sh
 #PBS -l place=shared,select=1:ncpus=1:mem=2GB
 #PBS -l debug=true
 

@@ -2,15 +2,12 @@
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
-<<<<<<< HEAD:dev/drivers/scripts/stats/cam/jevs_stats_cam_namnest_grid2obs.sh
 #PBS -A EVS-DEV
 #PBS -l walltime=03:00:00
 #PBS -l place=vscatter:exclhost,select=1:ncpus=128:ompthreads=1:mem=256GB
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=03:05:00
 #PBS -l place=vscatter:exclhost,select=1:ncpus=128:ompthreads=1:mem=190GB
->>>>>>> develop:dev/drivers/scripts/stats/cam/jevs_stats_cam_rrfs_grid2obs.sh
 #PBS -l debug=true
 
 set -x

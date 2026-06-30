@@ -15,14 +15,11 @@ export machine=WCOSS2
 export SENDECF=YES
 export SENDCOM=YES
 export KEEPDATA=NO
-<<<<<<< HEAD:dev/drivers/scripts/prep/cam/jevs_prep_cam_hireswfv3_precip.sh
 export SENDDBN=YES
 export SENDDBN_NTC=
 export job=${PBS_JOBNAME:-jevs_prep_cam_hireswfv3_precip}
-=======
 export SENDDBN=NO
 export job=${PBS_JOBNAME:-jevs_prep_cam_precip}
->>>>>>> develop:dev/drivers/scripts/prep/cam/jevs_prep_cam_precip.sh
 export jobid=$job.${PBS_JOBID:-$$}
 export SITE=$(cat /etc/cluster_name)
 export USE_CFP=YES

@@ -2,15 +2,12 @@
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
-<<<<<<< HEAD:dev/drivers/scripts/stats/cam/jevs_stats_cam_hireswfv3_precip.sh
 #PBS -A EVS-DEV
 #PBS -l walltime=01:00:00
 #PBS -l place=vscatter:exclhost,select=1:ncpus=128:ompthreads=1:mem=128GB
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=02:05:00
 #PBS -l select=1:ncpus=128:ompthreads=1:mem=310GB
->>>>>>> develop:dev/drivers/scripts/stats/cam/jevs_stats_cam_rrfsmem_precip.sh
 #PBS -l debug=true
 
 set -x

@@ -2,15 +2,12 @@
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
-<<<<<<< HEAD:dev/drivers/scripts/prep/cam/jevs_prep_cam_href_severe.sh
 #PBS -A EVS-DEV
 #PBS -l walltime=00:10:00
 #PBS -l place=shared,select=1:ncpus=1:mem=10GB
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=00:15:00
 #PBS -l place=shared,select=1:ncpus=1:mem=20GB
->>>>>>> develop:dev/drivers/scripts/prep/cam/jevs_prep_cam_refs_severe.sh
 #PBS -l debug=true
 
 

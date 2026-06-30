@@ -2,15 +2,12 @@
 #PBS -j oe
 #PBS -S /bin/bash
 #PBS -q dev
-<<<<<<< HEAD
 #PBS -A EVS-DEV
 #PBS -l walltime=00:10:00
 #PBS -l place=vscatter:exclhost,select=1:ncpus=3:ompthreads=1:mem=128GB
-=======
 #PBS -A VERF-DEV
 #PBS -l walltime=00:15:00
 #PBS -l place=shared,select=1:ncpus=3:ompthreads=1:mem=90GB
->>>>>>> develop
 #PBS -l debug=true
 
 set -x
@@ -22,12 +19,9 @@ export SENDMAIL=YES
 export SENDECF=YES
 export SENDCOM=YES
 export KEEPDATA=NO
-<<<<<<< HEAD
 export SENDDBN=YES
 export SENDDBN_NTC=
-=======
 export SENDDBN=NO
->>>>>>> develop
 export job=${PBS_JOBNAME:-jevs_prep_cam_hrrr_precip}
 export jobid=$job.${PBS_JOBID:-$$}
 export SITE=$(cat /etc/cluster_name)
