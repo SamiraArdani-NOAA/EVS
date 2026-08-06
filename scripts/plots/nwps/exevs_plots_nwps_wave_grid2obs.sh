@@ -62,21 +62,23 @@ for wfo in ${WFO}; do
     theDate=${plot_start_date}
     while (( ${theDate} <= ${plot_end_date} )); do
         EVSINnwps=${COMIN}/stats/${COMPONENT}/${MODELNAME}.${theDate}
-        if [ -s ${EVSINnwps}/evs.stats.${MODELNAME}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
-            cp ${EVSINnwps}/evs.stats.${MODELNAME}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ${DATA_wfo}/stats/.
-        else
-            echo "WARNING: ${EVSINnwps}/evs.stats.${MODELNAME}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat DOES NOT EXIST"
-        fi
-        theDate=$(date --date="${theDate} + 1 day" '+%Y%m%d')
+        for model in ${models}; do
+		if [ -s ${EVSINnwps}/evs.stats.${model}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
+			cp ${EVSINnwps}/evs.stats.${model}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat ${DATA_wfo}/stats/.
+		else
+			echo "WARNING: ${EVSINnwps}/evs.stats.${model}.${wfo}.${RUN}.${VERIF_CASE}.v${theDate}.stat DOES NOT EXIST"
+		fi
+        done
+	theDate=$(date --date="${theDate} + 1 day" '+%Y%m%d')
     done
 
     ####################
     # quick error check 
     ####################
-    nc1=`ls ${DATA}/stats/evs.stats.nwpsv1p4.${wfo}*stat | wc -l | awk '{print $1}'`
-        nc2=`ls ${DATA}/stats/evs.stats.nwpsv1p5.${wfo}*stat | wc -l | awk '{print $1}'`
-        echo " Found ${nc1} ${DATA}/stats/evs.stats.nwpsv1p4.${wfo}*stat file for ${VDATE} "
-        echo " Found ${nc2} ${DATA}/stats/evs.stats.nwpsv1p5.${wfo}*stat file for ${VDATE} "
+    nc1=`ls ${DATA_wfo}/stats/evs.stats.nwpsv1p4.${wfo}*stat | wc -l | awk '{print $1}'`
+        nc2=`ls ${DATA_wfo}/stats/evs.stats.nwpsv1p5.${wfo}*stat | wc -l | awk '{print $1}'`
+        echo " Found ${nc1} ${DATA_wfo}/stats/evs.stats.nwpsv1p4.${wfo}*stat file for ${VDATE} "
+        echo " Found ${nc2} ${DATA_wfo}/stats/evs.stats.nwpsv1p5.${wfo}*stat file for ${VDATE} "
 
         if [ "${nc1}" != '0' ]
                 then
