@@ -11,7 +11,7 @@
 set -x
 
 export OMP_NUM_THREADS=1
-export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/EVS
+export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/nwps_evaluation/EVS
 
 export MODELNAME=nwps
 export OBTYPE=NDBC

@@ -10,7 +10,7 @@
 
 set -x
 
-export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/EVS
+export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/nwps_evaluation/EVS
 
 export MODELNAME=nwps
 export NET=evs
