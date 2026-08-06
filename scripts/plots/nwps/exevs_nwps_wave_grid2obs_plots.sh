@@ -21,6 +21,9 @@ export MET_VERSION_major_minor=$(echo $MET_VERSION | sed "s/\([^.]*\.[^.]*\)\..*
 export LOUD=${LOUD:-YES}; [[ $LOUD = yes ]] && export LOUD=YES
 [[ "$LOUD" != YES ]] && set -x
 
+export models='nwpsv1p4 nwpsv1p5'
+export MODNAMS='NWPSV1P4 NWPSV1P5'
+export MODELS='NWPSV1P4, NWPSV1P5'
 
 echo "Starting grid2obs_plots for ${MODELNAME}_${RUN}"
 
@@ -70,26 +73,38 @@ for wfo in ${WFO}; do
     ####################
     # quick error check 
     ####################
-    # Check for files specifically inside this WFO's stats sandbox
-    nc=$(ls ${DATA_wfo}/stats/evs.stats.${MODELNAME}.${wfo}*stat 2>/dev/null | wc -l | awk '{print $1}')
-    
-    if [ "${nc}" != '0' ] && [ -n "${nc}" ]; then
-        set -x
-        echo "Successfully found ${nc} NWPS *.stat file(s) for ${wfo} up to ${VDATE}"
-        [[ "$LOUD" = YES ]] && set -x
-    else
-        set -x
-        echo ' '
-        echo '**************************************** '
-        echo '*** WARNING: NO NWPS *.stat FILES *** '
-        echo "             for ${wfo} at ${VDATE} "
-        echo '**************************************** '
-        echo ' '
-        echo "${MODELNAME}_${RUN} $VDATE : NWPS *.stat files missing for ${wfo}."
-        [[ "$LOUD" = YES ]] && set -x
-        continue # Safely skips the rest of the loop for this WFO without breaking the others
-    fi
+    nc1=`ls ${DATA}/stats/evs.stats.nwpsv1p4.${wfo}*stat | wc -l | awk '{print $1}'`
+        nc2=`ls ${DATA}/stats/evs.stats.nwpsv1p5.${wfo}*stat | wc -l | awk '{print $1}'`
+        echo " Found ${nc1} ${DATA}/stats/evs.stats.nwpsv1p4.${wfo}*stat file for ${VDATE} "
+        echo " Found ${nc2} ${DATA}/stats/evs.stats.nwpsv1p5.${wfo}*stat file for ${VDATE} "
 
+        if [ "${nc1}" != '0' ]
+                then
+                set -x
+                echo "Successfully copied the NWPSv1p4 *.stat file for ${VDATE}"
+                [[ "$LOUD" = YES ]] && set -x
+
+                if [ "${nc2}" != '0' ]
+                        then
+                        set -x
+                        echo "Successfully copied the NWPSv1p5 *.stat file for ${VDATE}"
+                        [[ "$LOUD" = YES ]] && set -x
+                else
+                        echo "WARNING: Did not copy the NWPSV1P5 *.stat files for ${VDATE}"
+                fi
+
+        else
+                set -x
+                echo ' '
+                echo '**************************************** '
+                echo '*** WARNING: NO NWPS *.stat FILES *** '
+                echo "             for ${wfo} at ${VDATE} "
+                echo '**************************************** '
+                echo ' '
+                echo "${MODELNAME}_${RUN} $VDATE $vhour : NWPS *.stat files missing."
+                [[ "$LOUD" = YES ]] && set -x
+                continue # This will skip the rest of the loop for this WFO
+        fi
     #################################
     ## Make the command files for cfp 
     #################################
@@ -210,6 +225,3 @@ echo ' '
 echo " *** End of ${MODELNAME}-${RUN} grid2obs stat *** "
 echo ' '
 [[ "$LOUD" = YES ]] && set -x
-
-
-

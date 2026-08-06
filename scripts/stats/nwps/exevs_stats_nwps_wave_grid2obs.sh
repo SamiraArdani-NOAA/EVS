@@ -96,14 +96,15 @@ for wfo in ${WFO}; do
 	    			match_fhr=$(printf "%02d" "${match_hr}")
 	    			flead=$(printf "%03d" "${lead}")
 	    			flead2=$(printf "%02d" "${lead}")
-	    
-	    			EVSINmodelfilename=$COMIN/prep/$COMPONENT/${RUN}.${match_date}/${MODELNAME}/${VERIF_CASE}/${wfo}_${MODELNAME}_${cg}.${match_date}.t${match_fhr}z.f${flead}.grib2
-	    			DATAmodelfilename=$DATA/gribs/${wfo}_${MODELNAME}_${cg}.${match_date}.t${match_fhr}z.f${flead}.grib2
-	    			for OBSNAME in NDBC; do
-		    			export OBSNAME=${OBSNAME}
-			    		EVSINobsfilename=${EVSINndbcnc}/${RUN}.${VDATE}/ndbc/${VERIF_CASE}/ndbc.${VDATE}.nc
-			    		DATAobsfilename=${DATA}/ncfiles/ndbc.${VDATE}.nc
-	    			done
+	   		
+				EVSINmodelfilename=$COMIN/prep/$COMPONENT/${RUN}.${match_date}/${MODELNAME}/${VERIF_CASE}/${MODELNAME}.t${match_fhr}z.${cg}.${wfo}.f${flead}.grib2
+                                DATAmodelfilename=$DATA/gribs/${MODELNAME}.${match_date}.t${match_fhr}z.${cg}.${wfo}.f${flead}.grib2
+                                for OBSNAME in NDBC; do
+                                        export OBSNAME=${OBSNAME}
+                                        EVSINobsfilename=${EVSINndbcnc}/${RUN}.${VDATE}/ndbc/${VERIF_CASE}/ndbc.${VDATE}.nc
+                                        DATAobsfilename=${DATA}/ncfiles/ndbc.${VDATE}.nc
+                                done
+
 			        job_work_dir=$DATA/job_work_dir/${wfo}/PointStat_obs${OBSNAME}_valid${VDATE}${vhr2}_f${flead}
 			        job_stat_file=$job_work_dir/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat	
 				DATAstatfilename=$DATA/all_stats/${wfo}/point_stat_fcst${MODNAM}_obs${OBSNAME}_climoERA5_${flead2}0000L_${VDATE}_${vhr2}0000V.stat
