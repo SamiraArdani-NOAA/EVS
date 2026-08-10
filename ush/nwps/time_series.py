@@ -547,9 +547,10 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
         plotted_reference = [False, False]
         if confidence_intervals:
             plotted_reference_CIs = [False, False]
-    f = lambda m,c,ls,lw,ms,mec: plt.plot(
-        [], [], marker=m, mec=mec, mew=2., c=c, ls=ls, lw=lw, ms=ms
-    )[0]
+    f = lambda m,c,ls,lw,ms,mec: matplotlib.lines.Line2D(
+        [0], [0], marker=m, markeredgecolor=mec, markeredgewidth=2., 
+        color=c, linestyle=ls, linewidth=lw, markersize=ms
+    )
     if metric2_name is not None:
         if np.any(plot_reference):
             ref_color_dict = model_colors.get_color_dict('obs')
@@ -583,8 +584,8 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
             ]
     else:
         handles = []
-        #labels = []
-        labels = [model_list[0].upper()]
+        labels = []
+        #labels = [model_list[0].upper()]
     n_mods = 0
     for m in range(len(mod_setting_dicts)):
         if model_list[m] in model_colors.model_alias:
@@ -745,8 +746,8 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
                 labels+=[
                     f'{model_plot_name} ({metric1_mean_fmt_string})'
                 ]
-#        else:
-#            labels+=[f'{model_plot_name}']
+        else:
+            labels+=[f'{model_plot_name}']
 # Removes the model legend after all the metrics
 
     # Zero line
