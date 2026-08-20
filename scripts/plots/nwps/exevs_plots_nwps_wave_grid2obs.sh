@@ -75,38 +75,44 @@ for wfo in ${WFO}; do
     ####################
     # quick error check 
     ####################
-    nc1=`ls ${DATA_wfo}/stats/evs.stats.nwpsv1p4.${wfo}*stat | wc -l | awk '{print $1}'`
-        nc2=`ls ${DATA_wfo}/stats/evs.stats.nwpsv1p5.${wfo}*stat | wc -l | awk '{print $1}'`
-        echo " Found ${nc1} ${DATA_wfo}/stats/evs.stats.nwpsv1p4.${wfo}*stat file for ${VDATE} "
-        echo " Found ${nc2} ${DATA_wfo}/stats/evs.stats.nwpsv1p5.${wfo}*stat file for ${VDATE} "
+    nc1=`ls ${DATA_wfo}/stats/evs.stats.nwpsv1p4.${wfo}*stat 2>/dev/null | wc -l | awk '{print $1}'`
+    nc2=`ls ${DATA_wfo}/stats/evs.stats.nwpsv1p5.${wfo}*stat 2>/dev/null | wc -l | awk '{print $1}'`
 
-        if [ "${nc1}" != '0' ]
-                then
-                set -x
-                echo "Successfully copied the NWPSv1p4 *.stat file for ${VDATE}"
-                [[ "$LOUD" = YES ]] && set -x
+    echo " Found ${nc1} ${DATA_wfo}/stats/evs.stats.nwpsv1p4.${wfo}*stat file for ${VDATE} "
+    echo " Found ${nc2} ${DATA_wfo}/stats/evs.stats.nwpsv1p5.${wfo}*stat file for ${VDATE} "
 
-                if [ "${nc2}" != '0' ]
-                        then
-                        set -x
-                        echo "Successfully copied the NWPSv1p5 *.stat file for ${VDATE}"
-                        [[ "$LOUD" = YES ]] && set -x
-                else
-                        echo "WARNING: Did not copy the NWPSV1P5 *.stat files for ${VDATE}"
-                fi
+    # Check nc1 independently
+    if [ "${nc1}" != '0' ]; then
+      set -x
+      echo "Successfully copied the NWPSv1p4 *.stat file for ${VDATE}"
+      [[ "$LOUD" = YES ]] && set -x
+    else
+      echo "WARNING: Did not copy the NWPSv1p4 *.stat files for ${VDATE}"
+    fi
 
-        else
-                set -x
-                echo ' '
-                echo '**************************************** '
-                echo '*** WARNING: NO NWPS *.stat FILES *** '
-                echo "             for ${wfo} at ${VDATE} "
-                echo '**************************************** '
-                echo ' '
-                echo "${MODELNAME}_${RUN} $VDATE $vhour : NWPS *.stat files missing."
-                [[ "$LOUD" = YES ]] && set -x
-                continue # This will skip the rest of the loop for this WFO
-        fi
+# Check nc2 independently
+    if [ "${nc2}" != '0' ]; then
+      set -x
+      echo "Successfully copied the NWPSv1p5 *.stat file for ${VDATE}"
+      [[ "$LOUD" = YES ]] && set -x
+    else
+      echo "WARNING: Did not copy the NWPSv1p5 *.stat files for ${VDATE}"
+    fi
+
+# If BOTH are missing, issue the critical warning and skip the rest of the loop
+    if [ "${nc1}" == '0' ] && [ "${nc2}" == '0' ]; then
+      set -x
+      echo ' '
+      echo '**************************************** '
+      echo '*** WARNING: NO NWPS *.stat FILES *** '
+      echo "             for ${wfo} at ${VDATE} "
+      echo '**************************************** '
+      echo ' '
+      echo "${MODELNAME}_${RUN} $VDATE $vhour : NWPS *.stat files missing."
+      [[ "$LOUD" = YES ]] && set -x
+      continue # This will skip the rest of the loop for this WFO
+    fi
+
     #################################
     ## Make the command files for cfp 
     #################################
@@ -167,6 +173,10 @@ for wfo in ${WFO}; do
                     period_out='last31days'
                 elif [ "${period}" = 'LAST90DAYS' ] ; then
                     period_out='last90days'
+	    	elif [ "${period}" = 'SUMMER2026' ] ; then
+                    period_out='summer2026'
+		    elif [ "${period}" = 'WINTER2026' ] ; then
+                    period_out='winter2026'
                 else
                     period_out=${period_lower}
                 fi
