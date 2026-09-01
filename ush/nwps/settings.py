@@ -122,17 +122,17 @@ class Presets():
                 'init_beg': (datetime.now()-td(days=3)).strftime('%Y%m%d'),
                 'init_end': (datetime.now()-td(days=1)).strftime('%Y%m%d')
             },
-            '2020': {
-                'valid_beg': '20200101',
-                'valid_end': '20201231',
-                'init_beg': '20200101',
-                'init_end': '20201231'
+            'SUMMER2026': {
+                'valid_beg': '20260701',
+                'valid_end': '20260831',
+                'init_beg': '20260701',
+                'init_end': '20260831'
             },
-            '2021': {
-                'valid_beg': '20210101',
-                'valid_end': '20211231',
-                'init_beg': '20210101',
-                'init_end': '20211231'
+            'WINTER2026': {
+                'valid_beg': '20260201',
+                'valid_end': '20260330',
+                'init_beg': '20260201',
+                'init_end': '20260330'
             },
             'DJF': {
                 'valid_beg': (datetime.now()-td(days=365)).strftime('%Y1201'),
