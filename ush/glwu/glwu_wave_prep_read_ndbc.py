@@ -39,8 +39,8 @@ INITDATE_D =  '{:02d}'.format(INITDATE_YMD.day)
 PDATE= INITDATE_YMD + datetime.timedelta(days=1)
 PDATE_YMD =  datetime.datetime.strftime(PDATE, '%Y%m%d')
 
-all_ndbc = os.path.join(DCOMROOT,
-                        f'{PDATE_YMD}','validation_data','marine','buoy')
+all_ndbc = os.path.join('/lfs','h2','emc','vpppg','noscrub','emc.vpppg','verification','global','archive','obs_data','ndbc_buoy',
+                        f'{PDATE_YMD}')
 fixed_buoys = os.path.join (FIXevs,'ndbc_stations','ndbc_stations.xml')
 
 ndbc_for_glwu = os.path.join (DATA,'ndbc')

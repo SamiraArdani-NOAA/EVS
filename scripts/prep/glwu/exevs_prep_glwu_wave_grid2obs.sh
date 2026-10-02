@@ -84,7 +84,7 @@ mkdir -p ${DATA}/ndbc
 mkdir -p ${DATA}/ncfiles
 mkdir -p ${COMOUT}.${INITDATE}/ndbc/${VERIF_CASE}
 export MET_NDBC_STATIONS=${FIXevs}/ndbc_stations/ndbc_stations.xml
-ndbc_txt_ncount=$(ls -l $DCOMINndbc/$INITDATE/validation_data/marine/buoy/*.txt |wc -l)
+ndbc_txt_ncount=$(ls -l $DCOMINndbc/$INITDATE/*.txt |wc -l)
 if [ $ndbc_txt_ncount -gt 0 ]; then
 	python $USHevs/${COMPONENT}/glwu_wave_prep_read_ndbc.py
 	export err=$?; err_chk

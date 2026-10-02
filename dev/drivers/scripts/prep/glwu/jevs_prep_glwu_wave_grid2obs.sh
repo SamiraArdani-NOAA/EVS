@@ -10,7 +10,7 @@
 
 set -x
 
-export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/EVS
+export HOMEevs=/lfs/h2/emc/vpppg/noscrub/$USER/GLWU_thresh/EVS
 
 export MODELNAME=glwu
 export NET=evs
@@ -46,7 +46,7 @@ export SENDCOM=${SENDCOM:-YES}
 export SENDECF=${SENDECF:-YES}
 export SENDDBN=${SENDDBN:-NO}
 export KEEPDATA=${KEEPDATA:-NO}
-export SENDMAIL=${SENDMAIL:-YES}
+export SENDMAIL=${SENDMAIL:-NO}
 
 source $HOMEevs/dev/drivers/set_MAILTO.sh
 
