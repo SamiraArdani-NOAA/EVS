@@ -122,6 +122,12 @@ class Presets():
                 'init_beg': (datetime.now()-td(days=3)).strftime('%Y%m%d'),
                 'init_end': (datetime.now()-td(days=1)).strftime('%Y%m%d')
             },
+            'SUMMER2026': {
+                'valid_beg': '20260601',
+                'valid_end': '20260831',
+                'init_beg':  '20260601',
+                'init_end':  '20260831'
+            },
             '2020': {
                 'valid_beg': '20200101',
                 'valid_end': '20201231',

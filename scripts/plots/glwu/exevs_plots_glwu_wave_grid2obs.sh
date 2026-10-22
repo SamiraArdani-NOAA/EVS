@@ -24,6 +24,11 @@ export MET_VERSION_major_minor=`echo $MET_VERSION | sed "s/\([^.]*\.[^.]*\)\..*/
 export LOUD=${LOUD:-YES}; [[ $LOUD = yes ]] && export LOUD=YES
 [[ "$LOUD" != YES ]] && set -x
 
+export models='glwuv2 glwu_test'
+export MODNAMS='GLWUV2 GLWU_TEST'
+export MODELS='GLWUV2, GLWU_TEST'
+
+
 #############################
 # grid2obs wave model plots 
 #############################
@@ -55,17 +60,19 @@ mkdir -p ${DATA}/stats
 mkdir -p ${DATA}/job_work_dir
 mkdir -p ${DATA}/images
 
-plot_start_date=${PDYm90}
+plot_start_date="20260601"
 plot_end_date=${VDATE}
 
 theDate=${plot_start_date}
 while (( ${theDate} <= ${plot_end_date} )); do
   EVSINglwu=${COMIN}/stats/${COMPONENT}/${MODELNAME}.${theDate}
-    if [ -s ${EVSINglwu}/evs.stats.${MODELNAME}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
-	    cp ${EVSINglwu}/evs.stats.${MODELNAME}.${RUN}.${VERIF_CASE}.v${theDate}.stat ${DATA}/stats/.
+  for model in ${models}; do
+    if [ -s ${EVSINglwu}/evs.stats.${model}.${RUN}.${VERIF_CASE}.v${theDate}.stat ]; then
+	    cp ${EVSINglwu}/evs.stats.${model}.${RUN}.${VERIF_CASE}.v${theDate}.stat ${DATA}/stats/.
     else
-	    echo "WARNING: ${EVSINglwu}/evs.stats.${MODELNAME}.${RUN}.${VERIF_CASE}.v${theDate}.stat DOES NOT EXIST"
+	    echo "WARNING: ${EVSINglwu}/evs.stats.${model}.${RUN}.${VERIF_CASE}.v${theDate}.stat DOES NOT EXIST"
     fi
+  done
     theDate=$(date --date="${theDate} + 1 day" '+%Y%m%d')
 done
 
@@ -139,8 +146,8 @@ if [ $gather = yes ] ; then
 	echo " Found ${nc} ${DATA}/images/*.png "
 	for period in ${periods} ; do
 		period_lower=$(echo ${period,,})
-		if [ ${period} = 'LAST31DAYS' ] ; then
-			period_out='last31days'
+		if [ ${period} = 'SUMMER2026' ] ; then
+			period_out='summer2026'
 		elif [ ${period} = 'LAST90DAYS' ] ; then
 			period_out='last90days'
 		fi
