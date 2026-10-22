@@ -1032,24 +1032,21 @@ def plot_lead_average(df: pd.DataFrame, logger: logging.Logger,
     domain_string = domain_string.replace(', ','_')
     if str(domain_string).lower() == 'global_0p25':
         domain_string = 'latlon_0p25_glb'
-    save_name = (f'evs.'
-                 + f'{str(models_savename).lower()}.'
+    save_name = (f'evs.glwu.'
                  + f'{str(metric1_name).lower()}.'
                  + f'{str(var_savename).lower()}_{str(level_savename).lower()}_{str(obtype).lower()}.'
                  + f'{str(time_period_savename).lower()}.'
                  + f'fhrmean_{str(date_type).lower()}{str(date_hours_savename).lower()}_f{xticks[-1]}.'
                  + f'{str(domain_string).lower()}')
     if metric2_name is not None:
-        save_name = (f'evs.'
-                     + f'{str(models_savename).lower()}.'
+        save_name = (f'evs.glwu.'
                      + f'{str(metric1_name).lower()}_{str(metric2_name).lower()}.'
                      + f'{str(var_savename).lower()}_{str(level_savename).lower()}_{str(obtype).lower()}.'
                      + f'{str(time_period_savename).lower()}.'
                      + f'fhrmean_{str(date_type).lower()}{str(date_hours_savename).lower()}_f{xticks[-1]}.'
                      + f'{str(domain_string).lower()}')
     if thresh and '' not in thresh:
-        save_name = (f'evs.'
-                     + f'{str(models_savename).lower()}.'
+        save_name = (f'evs.glwu.'
                      + f'{str(metric1_name).lower()}_{str(thresholds_save_phrase).lower()}.'
                      + f'{str(var_savename).lower()}_{str(level_savename).lower()}_{str(obtype).lower()}.'
                      + f'{str(time_period_savename).lower()}.'

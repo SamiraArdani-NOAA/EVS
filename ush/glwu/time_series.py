@@ -76,7 +76,7 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
                      display_averages: bool = True, 
                      keep_shared_events_only: bool = False,
                      plot_group: str = 'sfc_upper', obtype: str = '',
-                     sample_equalization: bool = True,
+                     sample_equalization: bool = False,
                      plot_logo_left: bool = False,
                      plot_logo_right: bool = False, path_logo_left: str = '.',
                      path_logo_right: str = '.', zoom_logo_left: float = 1.,
@@ -508,7 +508,7 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
     plot_reference = [False, False]
     ref_metrics = ['OBAR']
     if str(metric1_name).upper() in ref_metrics:
-        plot_reference[0] = True
+        plot_reference[0] = False
         pivot_reference1 = pivot_metric1
         reference1 = pivot_reference1.mean(axis=1)
         if confidence_intervals:
@@ -526,7 +526,7 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
             )
             plot_reference[0] = False
     if metric2_name is not None and str(metric2_name).upper() in ref_metrics:
-        plot_reference[1] = True
+        plot_reference[1] = False
         pivot_reference2 = pivot_metric2
         reference2 = pivot_reference2.mean(axis=1)
         if confidence_intervals:
@@ -547,9 +547,10 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
         plotted_reference = [False, False]
         if confidence_intervals:
             plotted_reference_CIs = [False, False]
-    f = lambda m,c,ls,lw,ms,mec: plt.plot(
-        [], [], marker=m, mec=mec, mew=2., c=c, ls=ls, lw=lw, ms=ms
-    )[0]
+    f = lambda m,c,ls,lw,ms,mec: matplotlib.lines.Line2D(
+        [0], [0], marker=m, markeredgecolor=mec, markeredgewidth=2., 
+        color=c, linestyle=ls, linewidth=lw, markersize=ms
+    )
     if metric2_name is not None:
         if np.any(plot_reference):
             ref_color_dict = model_colors.get_color_dict('obs')
@@ -583,8 +584,8 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
             ]
     else:
         handles = []
-        #labels = []
-        labels = [model_list[0].upper()]
+        labels = []
+        #labels = [model_list[0].upper()]
     n_mods = 0    
     for m in range(len(mod_setting_dicts)):
         if model_list[m] in model_colors.model_alias:
@@ -746,8 +747,8 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
                 labels+=[
                     f'{model_plot_name} ({metric1_mean_fmt_string})'
                 ]
-#        else:
-#            labels+=[f'{model_plot_name}']
+        else:
+            labels+=[f'{model_plot_name}']
 # Removes the model legend after all the metrics
 
     # Zero line
@@ -1045,8 +1046,7 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
     domain_string = domain_string.replace(', ','_')
     if str(domain_string).lower() == 'global_0p25':
         domain_string = 'latlon_0p25_glb'
-    save_name = (f'evs.'
-                 + f'{str(models_savename).lower()}.'
+    save_name = (f'evs.glwu.'
                  + f'{str(metric1_name).lower()}.'
                  + f'{str(var_savename).lower()}_{str(level_savename).lower()}_{str(obtype).lower()}.'
                  + f'{str(time_period_savename).lower()}.'
@@ -1054,8 +1054,7 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
                  + f'{str(frange_save_string).lower()}.'
                  + f'{str(domain_string).lower()}')
     if metric2_name is not None:
-        save_name = (f'evs.'
-                 + f'{str(models_savename).lower()}.'
+        save_name = (f'evs.glwu.'
                  + f'{str(metric1_name).lower()}_{str(metric2_name).lower()}.'
                  + f'{str(var_savename).lower()}_{str(level_savename).lower()}_{str(obtype).lower()}.'
                  + f'{str(time_period_savename).lower()}.'
@@ -1063,8 +1062,7 @@ def plot_time_series(df: pd.DataFrame, logger: logging.Logger,
                  + f'{str(frange_save_string).lower()}.'
                  + f'{str(domain_string).lower()}')
     if thresh and '' not in thresh:
-        save_name = (f'evs.'
-                 + f'{str(models_savename).lower()}.'
+        save_name = (f'evs.glwu.'
                  + f'{str(metric1_name).lower()}_{str(thresholds_save_phrase).lower()}.'
                  + f'{str(var_savename).lower()}_{str(level_savename).lower()}_{str(obtype).lower()}.'
                  + f'{str(time_period_savename).lower()}.'
